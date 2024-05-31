@@ -1,0 +1,19 @@
+The system offers the following services:
+- Bumblebee
+- Ironbank
+- Grimlock
+
+These services use Jetfire to create asynchronous jobs. Each job generates a table named <service_name>_<job_id>. For instance, a job from Bumblebee with ID "2fafg2" would create a table named "bumblebee_2fafg2".
+
+The job table format is:
++----------+---------------+------+-----+---------+----------------+
+| Field    | Type          | Null | Key | Default | Extra          |
++----------+---------------+------+-----+---------+----------------+
+| id       | int           | NO   | PRI | NULL    | auto_increment |
+| data     | varchar(2048) | YES  |     | NULL    |                |
+| status   | varchar(255)  | YES  |     | NULL    |                |
+| message  | varchar(2048) | YES  |     | NULL    |                |
+| metadata | varchar(1024) | YES  |     | NULL    |                |
++----------+---------------+------+-----+---------+----------------+
+
+This table contains information about each processed record of the job.

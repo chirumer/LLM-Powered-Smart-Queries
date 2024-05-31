@@ -1,0 +1,30 @@
+mysql> desc job;
++----------------------+---------------+------+-----+---------+-------+
+| Field                | Type          | Null | Key | Default | Extra |
++----------------------+---------------+------+-----+---------+-------+
+| id                   | varchar(255)  | NO   | PRI | NULL    |       |
+| completion_time      | datetime      | YES  |     | NULL    |       |
+| created_at           | datetime      | NO   |     | NULL    |       |
+| exception_count      | int           | YES  |     | NULL    |       |
+| failure_count        | int           | YES  |     | NULL    |       |
+| failure_file_s3_link | varchar(255)  | YES  |     | NULL    |       |
+| file_s3_link         | varchar(255)  | YES  |     | NULL    |       |
+| filename             | varchar(255)  | YES  |     | NULL    |       |
+| metadata             | varchar(2048) | YES  |     | NULL    |       |
+| modified_at          | datetime      | NO   |     | NULL    |       |
+| record_count         | int           | YES  |     | NULL    |       |
+| repeated_column_data | varchar(512)  | YES  |     | NULL    |       |
+| result_file_s3_link  | varchar(255)  | YES  |     | NULL    |       |
+| status               | varchar(255)  | YES  |     | NULL    |       |
+| success_count        | int           | YES  |     | NULL    |       |
+| success_file_s3_link | varchar(255)  | YES  |     | NULL    |       |
+| job_type_config_id   | varchar(255)  | YES  | MUL | NULL    |       |
++----------------------+---------------+------+-----+---------+-------+
+
+Description:
+This table represents data related to asynchronous jobs created by the system's services using Jetfire.
+
+Status field values:
+- PROCESSED: Job is completed.
+- PREPARING_SUMMARY: Job is completed but metadata is not yet posted.
+- FAILED: Job failed.

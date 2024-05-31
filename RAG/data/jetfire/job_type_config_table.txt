@@ -1,0 +1,25 @@
+mysql> desc job_type_config;
++--------------------------+-----------------+------+-----+---------+-------+
+| Field                    | Type            | Null | Key | Default | Extra |
++--------------------------+-----------------+------+-----+---------+-------+
+| id                       | varchar(255)    | NO   | PRI | NULL    |       |
+| batch_size               | int             | YES  |     | NULL    |       |
+| created_at               | datetime        | NO   |     | NULL    |       |
+| delimiter                | varchar(255)    | YES  |     | NULL    |       |
+| file_decryption_password | varchar(255)    | YES  |     | NULL    |       |
+| header_list              | varbinary(2048) | YES  |     | NULL    |       |
+| header_record_number     | int             | YES  |     | NULL    |       |
+| is_file_encrypted        | bit(1)          | YES  |     | NULL    |       |
+| is_single_file_report    | bit(1)          | YES  |     | NULL    |       |
+| modified_at              | datetime        | NO   |     | NULL    |       |
+| name                     | varchar(255)    | NO   | UNI | NULL    |       |
+| notification_endpoint    | varchar(255)    | NO   |     | NULL    |       |
+| service_endpoint         | varchar(255)    | NO   |     | NULL    |       |
+| service_name             | varchar(255)    | NO   |     | NULL    |       |
+| skip_last_record_count   | int             | YES  |     | NULL    |       |
+| start_record_number      | int             | YES  |     | NULL    |       |
+| validation_code_snippet  | varchar(255)    | YES  |     | NULL    |       |
++--------------------------+-----------------+------+-----+---------+-------+
+
+Description:
+Each job created in Jetfire is associated with a job_type_config. This table contains the details required for a job_type_config.
