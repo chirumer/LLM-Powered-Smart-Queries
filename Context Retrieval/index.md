@@ -3,4 +3,4 @@ version_1
 -> cosine similarity search amongst the embeds
 
 version_2
--> comparing SQL connector + translation with plain schema
+-> comparing JSON, Text, Per Field chunking
