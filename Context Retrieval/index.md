@@ -9,7 +9,7 @@ version_3
 -> embeds update module
 
 version_4
--> comparison of schema retrieval methods
+-> schema selection
 
 
 Current Approach:

@@ -34,7 +34,7 @@ def create_embedding(data):
 
 
 class DatabaseConnection:
-    def __init__(self, eligible_databases):
+    def __init__(self, eligible_databases=['grimlock_dev_db', 'hyperface_dev_db', 'hyperface_platform_dev']):
         self.connection = None
         self.eligible_databases = eligible_databases
         self.connect()
@@ -123,9 +123,9 @@ class DatabaseConnection:
             cursor.close()
 
 
-def update_embeddings(allowed_databases=['grimlock_dev_db', 'hyperface_dev_db', 'hyperface_platform_dev']):
+def update_embeddings():
     try:
-        db_conn = DatabaseConnection(allowed_databases)
+        db_conn = DatabaseConnection()
         for db in db_conn.get_eligible_databases():
             for table in db_conn.get_eligible_tables(db):
                 text_description = f"The table {table} has the following columns: "
@@ -163,3 +163,10 @@ def update_embeddings(allowed_databases=['grimlock_dev_db', 'hyperface_dev_db', 
                 print('updated schema for', key)
     finally:
         db_conn.close()
+
+def get_embeddings(path=EMBEDDINGS_PATH):
+    embeds = {}
+    for file in os.listdir(path):
+        with open(path + file, 'r') as f:
+            embeds[file.replace('.json', '')] = json.load(f)
+    return embeds
