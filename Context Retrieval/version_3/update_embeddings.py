@@ -34,8 +34,9 @@ def create_embedding(data):
 
 
 class DatabaseConnection:
-    def __init__(self):
+    def __init__(self, eligible_databases):
         self.connection = None
+        self.eligible_databases = eligible_databases
         self.connect()
     
     def connect(self):
@@ -94,8 +95,7 @@ class DatabaseConnection:
             cursor.close()
     
     def get_eligible_databases(self):
-        eligible_databases = ['hyperface_platform_dev']
-        return eligible_databases
+        return self.eligible_databases
 
     def get_eligible_tables(self, db_name):
         if db_name == 'hyperface_platform_dev':
@@ -123,9 +123,9 @@ class DatabaseConnection:
             cursor.close()
 
 
-def update_embeddings():
+def update_embeddings(allowed_databases=['grimlock_dev_db', 'hyperface_dev_db', 'hyperface_platform_dev']):
     try:
-        db_conn = DatabaseConnection()
+        db_conn = DatabaseConnection(allowed_databases)
         for db in db_conn.get_eligible_databases():
             for table in db_conn.get_eligible_tables(db):
                 text_description = f"The table {table} has the following columns: "
@@ -163,7 +163,3 @@ def update_embeddings():
                 print('updated schema for', key)
     finally:
         db_conn.close()
-
-
-# Run the update_embeddings function
-update_embeddings()

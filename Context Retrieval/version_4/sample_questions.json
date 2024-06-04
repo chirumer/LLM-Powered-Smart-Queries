@@ -1,0 +1,111 @@
+[
+    {
+        "query": "What is the mobile number for the account with account id 123456?",
+        "correct_schema": [
+            "grimlock_dev_db.account"
+        ]
+    },
+    {
+        "query": "When was the account with switch account number as 123456 upgraded?",
+        "correct_schema": [
+            "grimlock_dev_db.account"
+        ]
+    },
+    {
+        "query": "What is the customer id for the customer for whom there is a variant upgrade from old program id 123 to new program id 234?",
+        "correct_schema": [
+            "grimlock_dev_db.account",
+            "grimlock_dev_db.variant_upgrade_tracker"
+        ]
+    },
+    {
+        "query": "What is the email id of the customer with customer number 987654?",
+        "correct_schema": [
+            "grimlock_dev_db.customer"
+        ]
+    },
+    {
+        "query": "What is the status of the variant upgrade tracker entry with id 123?",
+        "correct_schema": [
+            "grimlock_dev_db.variant_upgrade_tracker"
+        ]
+    },
+    {
+        "query": "When was the customer with customer id 789 created?",
+        "correct_schema": [
+            "grimlock_dev_db.customer"
+        ]
+    },
+    {
+        "query": "What is the card holder type for the variant upgrade tracker with awb number 456?",
+        "correct_schema": [
+            "grimlock_dev_db.variant_upgrade_tracker"
+        ]
+    },
+    {
+        "query": "What is the created date for the account with account number 112233?",
+        "correct_schema": [
+            "grimlock_dev_db.account"
+        ]
+    },
+    {
+        "query": "When was the last update for the customer with customer number 445566?",
+        "correct_schema": [
+            "grimlock_dev_db.customer"
+        ]
+    },
+    {
+        "query": "What is the mobile number for the account with switch account number 998877?",
+        "correct_schema": [
+            "grimlock_dev_db.account"
+        ]
+    },
+    {
+        "query": "How many accounts have been upgraded?",
+        "correct_schema": [
+            "grimlock_dev_db.account"
+        ]
+    },
+    {
+        "query": "How many customers have a specific variant upgrade from old program id 123 to new program id 234?",
+        "correct_schema": [
+            "grimlock_dev_db.variant_upgrade_tracker"
+        ]
+    },
+    {
+        "query": "When was the last time the customer with customer id 123 was updated?",
+        "correct_schema": [
+            "grimlock_dev_db.customer"
+        ]
+    },
+    {
+        "query": "How many accounts are suspended?",
+        "correct_schema": [
+            "grimlock_dev_db.account"
+        ]
+    },
+    {
+        "query": "When was the last time the account with account id 987 was updated?",
+        "correct_schema": [
+            "grimlock_dev_db.account"
+        ]
+    },
+    {
+        "query": "How many variant upgrade trackers are in a PENDING state?",
+        "correct_schema": [
+            "grimlock_dev_db.variant_upgrade_tracker"
+        ]
+    },
+    {
+        "query": "What is the billing period for the credit card with switch card id 123456?",
+        "correct_schema": [
+            "hyperface_dev_db.credit_card_program", "hyperface_dev_db.card"
+        ]
+    },
+    {
+        "query": "What is repayment url for the credit card with switch card id 123456? And what is the status of the account which owns this card?",
+        "correct_schema": [
+            "hyperface_dev_db.credit_card_program", "hyperface_dev_db.card", "hyperface_dev_db.account"
+        ]
+    }
+]
