@@ -45,7 +45,7 @@ def select_relevant_tables(db_conn, query):
             result = response.choices[0].text.strip()
             print(result)
             result = json.loads(result)
-            print('success')
+            print('successfully found relevant tables')
             return result
 
         except json.JSONDecodeError:

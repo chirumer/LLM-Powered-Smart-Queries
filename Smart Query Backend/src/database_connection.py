@@ -2,6 +2,7 @@ import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
 import os
+import json
 
 load_dotenv(dotenv_path='.env')
 db_host = os.getenv('DB_HOST')
@@ -97,7 +98,15 @@ class DatabaseConnection:
             cursor = self.connection.cursor()
             cursor.execute(query)
             result = cursor.fetchall()
-            return result
+
+            column_names = [i[0] for i in cursor.description]
+            json_data = [
+                {column: str(value) for column, value in zip(column_names, row)}
+                for row in result
+            ]
+            json_result = json.dumps(json_data, indent=4)
+
+            return json_result
         
         except Error as e:
             print(f"Error: {e}")
