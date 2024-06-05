@@ -115,4 +115,4 @@ def get_model_reply(conversation):
     return response['result']
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=4000)
