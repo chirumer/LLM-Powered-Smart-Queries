@@ -87,3 +87,21 @@ class DatabaseConnection:
         
         finally:
             cursor.close()
+    
+    def run_query(self, query):
+        if not self.connection or not self.connection.is_connected():
+            print("No active MySQL connection")
+            return None
+
+        try:
+            cursor = self.connection.cursor()
+            cursor.execute(query)
+            result = cursor.fetchall()
+            return result
+        
+        except Error as e:
+            print(f"Error: {e}")
+            return None
+        
+        finally:
+            cursor.close()

@@ -15,5 +15,5 @@ version_4
 Current Approach:
 Step 1 -> Use text embedding to retrieve top N schema
 Step 2 -> Query GPT-3.5 to select relevant schema [Use few shot prompting]
-Step 3 -> Query GPT-3.5 with (Relevant schema + Query) [Use few shot prompting]
+Step 3 -> Query GPT-3.5 with (Relevant schema + Query)
 Step 4 -> Execute the SQL query suggested by GPT-3.5

@@ -17,8 +17,7 @@ def get_top_N_related_tables(query, N=8):
     score.sort(key=lambda x: x[1], reverse=True)
     return score[:N]
 
-def generate_selection_prompt(candidates, query):
-    db_conn = DatabaseConnection()
+def generate_selection_prompt(db_conn, candidates, query):
     
     prompt = 'Here are the tables available:\n'
     for table, _ in candidates:
@@ -35,9 +34,9 @@ def generate_selection_prompt(candidates, query):
     prompt += f"Relevant Tables: "
     return prompt
 
-def select_relevant_tables(query):
+def select_relevant_tables(db_conn, query):
     candidates = get_top_N_related_tables(query)
-    prompt = generate_selection_prompt(candidates, query)
+    prompt = generate_selection_prompt(db_conn, candidates, query)
 
     invalid_output_count = 0
     while invalid_output_count < 3:
