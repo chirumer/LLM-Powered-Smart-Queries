@@ -51,7 +51,7 @@ def smart_query(query):
         else:
             print('success')
             db_conn.close()
-            return result
+            return { "sql_query": sql_query, "result": result }
 
     db_conn.close()
     raise Exception(f"Failed to execute the following queries: {failed_queries}")
