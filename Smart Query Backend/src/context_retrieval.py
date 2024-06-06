@@ -41,8 +41,7 @@ def select_relevant_tables(db_conn, query):
     invalid_output_count = 0
     while invalid_output_count < 3:
         try:
-            response = get_instruct_response(prompt)
-            result = response.choices[0].text.strip()
+            result = get_instruct_response(prompt)
             print(result)
             result = json.loads(result)
             print('successfully found relevant tables')
