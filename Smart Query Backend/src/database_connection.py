@@ -4,23 +4,23 @@ from dotenv import load_dotenv
 import os
 import json
 
-load_dotenv(dotenv_path='.env')
-db_host = os.getenv('DB_HOST')
-db_user = os.getenv('DB_USER')
-db_password = os.getenv('DB_PASSWORD')
-
+class DatabaseCredentials:
+    def __init__(self, db_host, db_user, db_password):
+        self.db_host = db_host
+        self.db_user = db_user
+        self.db_password = db_password
 
 class DatabaseConnection:
-    def __init__(self):
+    def __init__(self, database_credentials):
         self.connection = None
-        self.connect()
+        self.connect(database_credentials)
     
-    def connect(self):
+    def connect(self, database_credentials):
         try:
             self.connection = mysql.connector.connect(
-                host=db_host,
-                user=db_user,
-                password=db_password
+                host=database_credentials.db_host,
+                user=database_credentials.db_user,
+                password=database_credentials.db_password
             )
             if self.connection.is_connected():
                 print("Connected to MySQL server")
@@ -100,7 +100,7 @@ class DatabaseConnection:
             result = cursor.fetchall()
 
             column_names = [i[0] for i in cursor.description]
-            
+
             def process_value(value):
                 if isinstance(value, bytes):
                     return "0x" + value.hex().upper()
