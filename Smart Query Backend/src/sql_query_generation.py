@@ -31,8 +31,8 @@ def text_to_sql_prompt(db_conn, query):
 
 def text_to_sql(db_conn, query):
     prompt = text_to_sql_prompt(db_conn, query)
-    response = get_instruct_response(prompt)
-    return response.choices[0].text.strip()
+    sql_query = get_instruct_response(prompt)
+    return sql_query
 
 def smart_query(query):
     db_conn = DatabaseConnection()

@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.append(os.path.abspath('src'))
 from sql_query_generation import smart_query
+from cost_estimation_module import get_usage_checkpoint, calculate_cost
 
 from flask import Flask, request, jsonify
 
@@ -18,7 +19,9 @@ def handle_query():
     if not query:
         return jsonify({"error": "Query not provided"}), 400
 
+    initial_checkpoint = get_usage_checkpoint()
     response = smart_query(query)
+    response['cost'] = calculate_cost(initial_checkpoint, get_usage_checkpoint())
     return jsonify(response)
 
 if __name__ == '__main__':
