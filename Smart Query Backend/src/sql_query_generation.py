@@ -1,6 +1,6 @@
 from context_retrieval import select_relevant_tables
-from database_connection import DatabaseConnection
 from models_wrapper import get_instruct_response
+from configuration import get_database_credentials_for_environment
 
 def format_schema(schema):
     headings = ["Field", "Type", "Null", "Key", "Default", "Extra"]
@@ -16,8 +16,8 @@ def format_schema(schema):
     
     return schema_string
 
-def text_to_sql_prompt(db_conn, query):
-    relevant_tables = select_relevant_tables(db_conn, query)
+def text_to_sql_prompt(db_conn, database, query):
+    relevant_tables = select_relevant_tables(db_conn, database, query)
 
     prompt = 'Here are the available table schema:\n'
     for table in relevant_tables:
@@ -29,19 +29,18 @@ def text_to_sql_prompt(db_conn, query):
     prompt += f"Please write the SQL query to solve the following query. Give me JUST the executable query and nothing else:\n{query}\n"
     return prompt
 
-def text_to_sql(db_conn, query):
-    prompt = text_to_sql_prompt(db_conn, query)
+def text_to_sql(db_conn, database, query):
+    prompt = text_to_sql_prompt(db_conn, database, query)
     sql_query = get_instruct_response(prompt)
     return sql_query
 
-def smart_query(query):
-    db_conn = DatabaseConnection()
+def smart_query(db_conn, environment, database, query):
 
     failed_queries = []
     tries = 0
     while tries < 3:
 
-        sql_query =  text_to_sql(db_conn, query)
+        sql_query =  text_to_sql(db_conn, database, query)
         print(sql_query)
         result = db_conn.run_query(sql_query)
 

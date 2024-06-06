@@ -4,11 +4,11 @@ from database_connection import DatabaseConnection
 import json
 from models_wrapper import get_instruct_response
 
-def get_top_N_related_tables(query, N=8):
+def get_top_N_related_tables(database, query, N=8):
     query_embed = create_embedding(query)
     relatedness_fn = lambda x, y: 1 - spatial.distance.cosine(x, y)
 
-    embeds = get_embeddings()
+    embeds = get_embeddings(database)
 
     score = []
     for table, embedding in embeds.items():
@@ -34,8 +34,8 @@ def generate_selection_prompt(db_conn, candidates, query):
     prompt += f"Relevant Tables: "
     return prompt
 
-def select_relevant_tables(db_conn, query):
-    candidates = get_top_N_related_tables(query)
+def select_relevant_tables(db_conn, database, query):
+    candidates = get_top_N_related_tables(database, query)
     prompt = generate_selection_prompt(db_conn, candidates, query)
 
     invalid_output_count = 0
