@@ -17,7 +17,7 @@ def handle_query():
 
     if not query:
         return jsonify({"error": "Query not provided"}), 400
-    
+
     response = smart_query(query)
     return jsonify(response)
 

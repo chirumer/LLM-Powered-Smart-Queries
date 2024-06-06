@@ -100,14 +100,20 @@ class DatabaseConnection:
             result = cursor.fetchall()
 
             column_names = [i[0] for i in cursor.description]
+            
+            def process_value(value):
+                if isinstance(value, bytes):
+                    return "0x" + value.hex().upper()
+                return str(value)
+            
             json_data = [
-                {column: str(value) for column, value in zip(column_names, row)}
+                {column: process_value(value) for column, value in zip(column_names, row)}
                 for row in result
             ]
             json_result = json.dumps(json_data, indent=4)
 
             return json_result
-        
+
         except Error as e:
             print(f"Error: {e}")
             return None
