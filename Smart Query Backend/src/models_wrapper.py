@@ -21,6 +21,4 @@ def get_instruct_response(prompt):
     update_model_input_usage(response.usage.prompt_tokens)
     update_model_output_usage(response.usage.completion_tokens)
 
-    print(response)
-
     return response.choices[0].text.strip()
