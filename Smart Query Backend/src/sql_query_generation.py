@@ -57,6 +57,6 @@ def smart_query(db_conn, database, query):
             continue
 
         print('query executed successfully', result)
-        return { "sql_query": sql_query, "result": str(result) }
+        return { "sql_query": sql_query, "result": result }
 
     raise ApplicationException(f"generated but failed to execute queries: {failed_queries}")
