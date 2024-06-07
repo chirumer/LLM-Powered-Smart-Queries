@@ -1,10 +1,10 @@
-const url = "http://127.0.0.1:5000/api/sessions"
+const url = "/api/sessions"
 
-//Environments and Databases
-const environments = ["Hyperface User Acceptance Testing Environment", "Prod"];
+const environments = ["dev", "Hyperface User Acceptance Testing Environment", "Prod"];
 const databases = {
-    "Hyperface User Acceptance Testing Environment": ["Database A", "Database B"],
-    "Prod": ["Database X", "Database Y", "Database Z"]
+    "dev": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
+    "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
+    "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
 };
 
 let sessionId = null;
