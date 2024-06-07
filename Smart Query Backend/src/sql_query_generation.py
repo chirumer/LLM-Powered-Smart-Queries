@@ -2,7 +2,7 @@ from context_retrieval import select_relevant_tables
 from models_wrapper import get_instruct_response
 from configuration import CONSTANTS, get_database_credentials_for_environment 
 from custom_exceptions import ApplicationException
-from validation import validate_generated_query_is_safe
+from validation import is_generated_safe_query
 
 def format_schema(schema):
     headings = ["Field", "Type", "Null", "Key", "Default", "Extra"]
@@ -28,7 +28,7 @@ def text_to_sql_prompt(db_conn, database, query):
         prompt += format_schema(schema)
     prompt += '\n'
 
-    prompt += f"Please write the SQL query to solve the following query. Give me JUST the executable query and nothing else:\n{query}\n"
+    prompt += f"Please write the SQL query to solve the following query. Give me JUST the executable query and nothing else, no extra characters either:\n{query}\n"
     return prompt
 
 def text_to_sql(db_conn, database, query):
@@ -44,8 +44,8 @@ def smart_query(db_conn, database, query):
 
         sql_query =  text_to_sql(db_conn, database, query)
         print('generated SQL query:', sql_query)
-        if not validate_generated_query_is_safe(sql_query):
-            raise ApplicationException(f"Generated unsafe query {sql_query}")
+        if not is_generated_safe_query(sql_query):
+            raise ApplicationException(f"generated unsafe query {sql_query}")
         
         try:
             result = db_conn.run_query(sql_query)

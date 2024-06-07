@@ -3,10 +3,10 @@ import os
 from dotenv import load_dotenv
 from database_connection import DatabaseCredentials
 from custom_exceptions import ApplicationException
-from enum import Enum
+from enum import IntEnum
 
 
-class CONSTANTS(Enum):
+class CONSTANTS(IntEnum):
     MAX_QUERY_REGENERATION = 3
     MAX_RELEVANT_TABLE_REGENERATION = 3
 
