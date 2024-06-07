@@ -68,7 +68,6 @@ def get_session(sessionId):
 
 @app.route('/api/sessions/<string:sessionId>/question', methods=['POST'])
 def add_question(sessionId):
-    print('testing')
     try:
         with connection.cursor() as cursor:
             # Fetch session by ID from the database

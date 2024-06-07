@@ -330,6 +330,7 @@ main .view {
     flex-direction: row;
     justify-content: center;
 }
+
 .model-selector>button {
     border-radius: 9px;
     text-align: center;
@@ -350,7 +351,7 @@ main .view {
 .env-drop {
     font-size: 20px;
     margin: 0;
-    padding:10px 15px;
+    padding: 10px 15px;
     border: none;
     color: white;
     border-radius: 9px;
@@ -369,21 +370,25 @@ main .view {
     top: 0;
 }
 
-.tooltip {
-    position: absolute;
-    color: white;
-    padding:5px 8px;
-    margin: 0;
-    margin-left: 120px;
+.tooltipDiv {
+    width: fit-content;
     display: none;
-    font-size: 12px;
+    margin-left: 110px;
     border: 1px solid rgb(145, 142, 142);
-    border-radius: 10px;
+    border-radius: 6px;
+}
+
+.tooltip {
+    color: white;
+    padding: 5px 8px;
+    margin: 2px;
+    font-size: 12px;
 }
 
 .gpt-3 .fa {
     color: var(--color-gpt3);
 }
+
 .gpt-4 .fa {
     color: var(--color-gpt4);
 }
@@ -529,7 +534,7 @@ select {
     -moz-appearance: none;
     appearance: none;
     background-image: none;
-    width: 150px; 
+    width: 170px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
