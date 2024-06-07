@@ -8,6 +8,7 @@ from enum import Enum
 
 class CONSTANTS(Enum):
     MAX_QUERY_REGENERATION = 3
+    MAX_RELEVANT_TABLE_REGENERATION = 3
 
 
 def load_credentials():

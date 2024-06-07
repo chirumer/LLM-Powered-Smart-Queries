@@ -42,7 +42,7 @@ def handle_query():
     except ApplicationException as e:
         return jsonify({"error": e.message}), 400
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f'unexpected error:\n{str(e)}'}), 500
 
     return jsonify(response)
 
