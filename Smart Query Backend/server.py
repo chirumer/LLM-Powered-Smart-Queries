@@ -7,6 +7,7 @@ from text_embeddings import update_embeddings
 from database_connection import DatabaseConnection
 from configuration import get_database_credentials_for_environment, get_all_database_credentials
 from cost_estimation_module import get_usage_checkpoint, calculate_cost
+from validation import validate_query
 
 from flask import Flask, request, jsonify
 
@@ -17,10 +18,17 @@ def handle_query():
     if not request.is_json:
         return jsonify({"error": "Invalid input"}), 400
     
-    data = request.get_json()
-    query = data.get('query')
-    environment = data.get('environment')
-    database = data.get('database')
+    try:
+        data = request.get_json()
+        query = data.get('query')
+        environment = data.get('environment')
+        database = data.get('database')
+    except:
+        return jsonify({"error": "Invalid input"}), 400
+
+    validation_result = validate_query(query, environment, database)
+    if not validation_result['is_valid']:
+        return jsonify(validation_result['reason']), 400
 
     initial_checkpoint = get_usage_checkpoint()
     db_credentials = get_database_credentials_for_environment(environment)

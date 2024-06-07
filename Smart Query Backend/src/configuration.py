@@ -25,8 +25,6 @@ credentials = load_credentials()
 def get_database_credentials_for_environment(environment):
     if environment in credentials:
         return credentials[environment]
-    else:
-        raise ApplicationException('No Credentials Set For This Environment')
     
 def get_all_database_credentials():
     db_credentials = []
