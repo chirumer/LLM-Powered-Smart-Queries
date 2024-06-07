@@ -1,12 +1,4 @@
-const url = "/api/sessions"
-
-//Environments and Databases
-const environments = ["dev", "Hyperface User Acceptance Testing Environment", "Prod"];
-const databases = {
-    "dev": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
-    "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
-    "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
-};
+const url = "http://127.0.0.1:5000/api/sessions"
 
 let sessionId = null;
 let environment = null;
@@ -85,6 +77,11 @@ async function getMessage() {
     if (newSession === true) {
         if (await createSession()) {
             sessionId += 1;
+            console.log("Session created")
+        }
+        else {
+            show_view(".new-chat-view");
+            return;
         }
     }
     inputElement.value = "";
@@ -125,6 +122,10 @@ async function createSession() {
     let dataElement = document.getElementById('databaseValue');
     let databaseName = dataElement.value;
     show_view(".conversation-view");
+    if(environment==""||databaseName==""){
+        alert("Please Select Environment And DataBase");
+        return;
+    }
     try {
         const data = {
             "Environment": environment,
@@ -143,7 +144,7 @@ async function createSession() {
             sessionId = result.sessionId;
             await allSession();
             await getSession();
-            newSession=false;
+            newSession = false;
         } else console.error('Failed to create session:', response.status);
 
     } catch (error) {
@@ -292,24 +293,35 @@ function appendAnswer(answer, sqlQuery) {
     const assistantContentDiv = document.createElement('div');
     assistantContentDiv.classList.add('content');
     const assistantMessageParagraph = document.createElement('p');
-    assistantMessageParagraph.textContent = answer;
+    assistantMessageParagraph.innerHTML = answer;
     assistantContentDiv.appendChild(assistantMessageParagraph);
+
+
+    let tooltipDiv = document.createElement("div");
+    tooltipDiv.classList.add("tooltipDiv");
 
     const tooltip = document.createElement('p');
     tooltip.textContent = sqlQuery;
     tooltip.classList.add("tooltip")
+    const tooltip1 = document.createElement('p');
+    tooltip1.textContent = sqlQuery;
+    tooltip1.classList.add("tooltip")
+
+    tooltipDiv.append(tooltip, tooltip1)
 
     assistantMessageDiv.addEventListener('mouseover', function (event) {
         const rect = event.target.getBoundingClientRect();
-        tooltip.style.display = 'block';
+        tooltipDiv.style.display = 'block';
+        tooltipDiv.classList.add('show');
     });
 
     assistantMessageDiv.addEventListener('mouseout', function () {
-        tooltip.style.display = 'none';
+        tooltipDiv.style.display = 'none';
+        tooltipDiv.classList.remove('show');
     });
     assistantMessageDiv.appendChild(assistantIdentityDiv);
     assistantMessageDiv.appendChild(assistantContentDiv);
-    chatContainer.appendChild(tooltip);
+    chatContainer.appendChild(tooltipDiv);
 
     chatContainer.appendChild(assistantMessageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -318,25 +330,58 @@ function appendAnswer(answer, sqlQuery) {
 let submitButton = document.getElementById("sendButton");
 submitButton.addEventListener("click", getMessage)
 //=====================================================================
-const envSelect = document.getElementById('envValue');
-const dbSelect = document.getElementById('databaseValue');
-
-environments.forEach(env => {
-    const option = document.createElement('option');
-    option.value = env;
-    option.textContent = env.replace("_", " ");
-    envSelect.appendChild(option);
-});
-
-envSelect.addEventListener('change', function () {
-    const selectedEnv = this.value;
-    dbSelect.innerHTML = '<option value=""> Database </option>';
-    if (selectedEnv && databases[selectedEnv]) {
-        databases[selectedEnv].forEach(db => {
-            const option = document.createElement('option');
-            option.value = db;
-            option.textContent = db.replace("_", " ");
-            dbSelect.appendChild(option);
-        });
+async function fetchEnvironment() {
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/api/environments`);
+        const data = await response.json();
+        displayEnviroment(data.environments);
+    } catch (error) {
+        console.error(error)
     }
-});
+}
+fetchEnvironment()
+//=====================================================================
+async function fetchDatabases(environment) {
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/api/databases/${environment}`);
+        const data = await response.json();
+        console.log("Databases",data)
+       return data;
+    } catch (error) {
+        console.error(error)
+    }
+}
+//=====================================================================
+function displayEnviroment(environments) {
+    console.log(environments);
+    const envSelect = document.getElementById('envValue');
+    const dbSelect = document.getElementById('databaseValue');
+
+    environments.forEach(env => {
+        const option = document.createElement('option');
+        option.value = env;
+        option.textContent = env.replace("_", " ");
+        envSelect.appendChild(option);
+    });
+
+    envSelect.addEventListener('change', function () {
+        const selectedEnv = this.value;
+        let databasesPromise = fetchDatabases(selectedEnv);
+        
+        databasesPromise.then(databases => { 
+            console.log(databases);
+            console.log("databases", databases);
+            dbSelect.innerHTML = '<option value=""> Database </option>';
+            if (selectedEnv && databases) {
+                databases.forEach(db => {
+                    const option = document.createElement('option');
+                    option.value = db;
+                    option.textContent = db.replace("_", " ");
+                    dbSelect.appendChild(option);
+                });
+            }
+        }).catch(error => {
+            console.error('Error fetching databases:', error);
+        });
+    });
+}

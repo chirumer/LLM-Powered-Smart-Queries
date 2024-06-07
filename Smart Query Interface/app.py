@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify,send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import pymysql.cursors
 import json
-import requests
-app = Flask(__name__,static_folder='static',static_url_path="")
+
+app = Flask(__name__, static_folder='static', static_url_path="")
 CORS(app)
 
 # Database connection
@@ -13,9 +13,16 @@ connection = pymysql.connect(host='localhost',
                              database='TextToSql',
                              cursorclass=pymysql.cursors.DictCursor)
 
+
+environments = ["Hyperface User Acceptance Testing Environment", "Prod"]
+databases = {
+        "Hyperface User Acceptance Testing Environment": ["Database A", "Database B"],
+        "Prod": ["Database X", "Database Y", "Database Z"]
+            }
+
 @app.route('/')
 def index():
-    return send_from_directory("static","index.html")
+    return send_from_directory("static", "index.html")
 
 @app.route('/api/sessions', methods=['POST'])
 def create_session():
@@ -38,7 +45,6 @@ def create_session():
             return jsonify(session), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/api/sessions', methods=['GET'])
 def get_sessions():
@@ -68,7 +74,6 @@ def get_session(sessionId):
 
 @app.route('/api/sessions/<string:sessionId>/question', methods=['POST'])
 def add_question(sessionId):
-    print('testing')
     try:
         with connection.cursor() as cursor:
             # Fetch session by ID from the database
@@ -99,12 +104,13 @@ def add_question(sessionId):
             cursor.execute(sql, (sessionId,))
             updated_conversation = json.loads(cursor.fetchone()['conversation'])
 
-            print(session['databaseName'])
-            answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
+            # Dummy reply
+            answer = get_model_reply(updated_conversation)
+            sqlQuery = "SELECT * FROM SESSIONS This is a dummy sql query"
             answer_object = {
                 "role": "assistant",
                 "content": answer,
-                "metadata":sql_query
+                "metadata": sqlQuery
             }
             # Update conversation in the database with answer
             updated_conversation.append(answer_object)
@@ -112,35 +118,199 @@ def add_question(sessionId):
             cursor.execute(sql, (json.dumps(updated_conversation), sessionId))
             connection.commit()
 
-            metadata = f"SQL Query: {sql_query};\nEmbedding Cost: {embedding_cost};\nModel Cost: {model_cost}"
-
-            return jsonify({"answer": answer,"metadata":metadata}), 201
+            return jsonify({
+                "answer": """<table>
+                <thead>
+                    <tr>
+                        <th>COLUMN_NAME</th>
+                        <th>DATA_TYPE</th>
+                        <th>IS_NULLABLE</th>
+                        <th>COLUMN_KEY</th>
+                        <th>COLUMN_DEFAULT</th>
+                        <th>EXTRA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>account_creation_date</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>block_code</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>block_code1</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>block_code2</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>card_block_code</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>card_creation_date</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>card_holder_type</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>card_last_four</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>created_at</td>
+                        <td>datetime</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>customer_number</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>first_name</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>bigint</td>
+                        <td>NO</td>
+                        <td>PRI</td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>int_status</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>last_updated</td>
+                        <td>datetime</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>logo</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>metadata</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>mobile_number</td>
+                        <td>varbinary</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>prev_logo</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>relationship_number</td>
+                        <td>varchar</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>enum</td>
+                        <td>YES</td>
+                        <td></td>
+                        <td>None</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>""",
+                "metadata": sqlQuery
+            }), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-def get_model_reply(conversation, database_name):
-    query = conversation[-1]['content']
-    url = "http://localhost:3000/query"
-    data = {
-        "query": query,
-        "environment": "dev",
-        "database": database_name
-    }
-    headers = {"Content-Type": "application/json"}
     
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        if response.status_code == 200:
-            response_data = response.json()
-            print(response_data)
-            return response_data.get('result'), response_data.get('sql_query'), response_data.get('cost').get('embedding_cost'), response_data.get('cost').get('model_cost')
-        else:
-            print(f"Error: Received status code {response.status_code}")
-            return 'An Internal Server Error Occurred', None, 0, 0
-    except requests.RequestException as e:
-        print(f"An error occurred: {str(e)}")
-        return 'An Internal Server Error Occurred', None, 0, 0
+@app.route('/api/environments', methods=['GET'])
+def get_environments():
+    return jsonify(environments=environments)
+
+@app.route('/api/databases/<environment>', methods=['GET'])
+def get_databases(environment):
+    if environment in databases:
+        return jsonify(databases[environment])
+    else:
+        return jsonify(error='Environment not found'), 404
+    
+def get_model_reply(conversation):
+    return f"Dummy reply for {conversation[-1]['content']}"
 
 if __name__ == '__main__':
     app.run(debug=True)
