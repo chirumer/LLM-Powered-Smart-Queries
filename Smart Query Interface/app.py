@@ -68,6 +68,7 @@ def get_session(sessionId):
 
 @app.route('/api/sessions/<string:sessionId>/question', methods=['POST'])
 def add_question(sessionId):
+    print('testing')
     try:
         with connection.cursor() as cursor:
             # Fetch session by ID from the database
@@ -98,7 +99,8 @@ def add_question(sessionId):
             cursor.execute(sql, (sessionId,))
             updated_conversation = json.loads(cursor.fetchone()['conversation'])
 
-            answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation)
+            print(session['databaseName'])
+            answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
             answer_object = {
                 "role": "assistant",
                 "content": answer,
@@ -117,13 +119,13 @@ def add_question(sessionId):
         return jsonify({"error": str(e)}), 500
 
 
-def get_model_reply(conversation):
+def get_model_reply(conversation, database_name):
     query = conversation[-1]['content']
     url = "http://localhost:3000/query"
     data = {
         "query": query,
         "environment": "dev",
-        "database": "all"
+        "database": database_name
     }
     headers = {"Content-Type": "application/json"}
     
@@ -135,10 +137,10 @@ def get_model_reply(conversation):
             return response_data.get('result'), response_data.get('sql_query'), response_data.get('cost').get('embedding_cost'), response_data.get('cost').get('model_cost')
         else:
             print(f"Error: Received status code {response.status_code}")
-            return 'An Internal Server Error Occurred', None
+            return 'An Internal Server Error Occurred', None, 0, 0
     except requests.RequestException as e:
         print(f"An error occurred: {str(e)}")
-        return 'An Internal Server Error Occurred', None
+        return 'An Internal Server Error Occurred', None, 0, 0
 
 if __name__ == '__main__':
     app.run(debug=True)
