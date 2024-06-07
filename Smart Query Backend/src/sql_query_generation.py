@@ -1,6 +1,7 @@
 from context_retrieval import select_relevant_tables
 from models_wrapper import get_instruct_response
-from configuration import get_database_credentials_for_environment
+from configuration import CONSTANTS, get_database_credentials_for_environment 
+from custom_exceptions import ApplicationException
 
 def format_schema(schema):
     headings = ["Field", "Type", "Null", "Key", "Default", "Extra"]
@@ -38,7 +39,7 @@ def smart_query(db_conn, environment, database, query):
 
     failed_queries = []
     tries = 0
-    while tries < 3:
+    while tries < CONSTANTS.MAX_QUERY_REGENERATION:
 
         sql_query =  text_to_sql(db_conn, database, query)
         print(sql_query)
@@ -53,4 +54,4 @@ def smart_query(db_conn, environment, database, query):
             return { "sql_query": sql_query, "result": str(result) }
 
     db_conn.close()
-    raise Exception(f"Failed to execute the following queries: {failed_queries}")
+    raise ApplicationException(f"Generated but failed to execute queries: {failed_queries}")

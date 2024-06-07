@@ -3,6 +3,11 @@ import os
 from dotenv import load_dotenv
 from database_connection import DatabaseCredentials
 from custom_exceptions import ApplicationException
+from enum import Enum
+
+
+class CONSTANTS(Enum):
+    MAX_QUERY_REGENERATION = 3
 
 
 def load_credentials():
