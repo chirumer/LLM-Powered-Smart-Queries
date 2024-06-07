@@ -62,7 +62,8 @@ def calculate_cost(checkpoint_before, checkpoint_after):
     
     return {
         'embedding_cost': format_cost(embedding_cost),
-        'model_cost': format_cost(model_cost)
+        'model_cost': format_cost(model_cost),
+        'total_cost': format_cost(embedding_cost + model_cost)
     }
 
 ###

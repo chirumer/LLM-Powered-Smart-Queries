@@ -36,6 +36,6 @@ if __name__ == '__main__':
         initial_checkpoint = get_usage_checkpoint()
         update_embeddings(db_conn)
         cost = calculate_cost(initial_checkpoint, get_usage_checkpoint())
-        print('Cost for updating embeddings:', cost['embedding_cost'])
+        print('Cost for updating embeddings:', cost['embedding_cost'], sep='')
 
     app.run(debug=True, port=3000)
