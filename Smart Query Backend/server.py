@@ -16,7 +16,7 @@ app = Flask(__name__)
 @app.route('/query', methods=['POST'])
 def handle_query():
     if not request.is_json:
-        return jsonify({"error": "Invalid input"}), 400
+        return jsonify({"error": "expecting JSON"}), 400
     
     try:
         data = request.get_json()
@@ -24,7 +24,7 @@ def handle_query():
         environment = data.get('environment')
         database = data.get('database')
     except:
-        return jsonify({"error": "Invalid input"}), 400
+        return jsonify({"error": "invalid input"}), 400
 
     validation_result = validate_query(query, environment, database)
     if not validation_result['is_valid']:
@@ -44,6 +44,6 @@ if __name__ == '__main__':
         initial_checkpoint = get_usage_checkpoint()
         update_embeddings(db_conn)
         cost = calculate_cost(initial_checkpoint, get_usage_checkpoint())
-        print('Cost for updating embeddings:', cost['embedding_cost'], sep='')
+        print('cost for updating embeddings:', cost['embedding_cost'], sep='')
 
     app.run(debug=True, port=3000)
