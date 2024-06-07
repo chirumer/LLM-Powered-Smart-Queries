@@ -2,6 +2,7 @@ from context_retrieval import select_relevant_tables
 from models_wrapper import get_instruct_response
 from configuration import CONSTANTS, get_database_credentials_for_environment 
 from custom_exceptions import ApplicationException
+from validation import validate_generated_query_is_safe
 
 def format_schema(schema):
     headings = ["Field", "Type", "Null", "Key", "Default", "Extra"]
@@ -42,16 +43,20 @@ def smart_query(db_conn, environment, database, query):
     while tries < CONSTANTS.MAX_QUERY_REGENERATION:
 
         sql_query =  text_to_sql(db_conn, database, query)
-        print(sql_query)
-        result = db_conn.run_query(sql_query)
+        print('generated SQL query:', sql_query)
+        if not validate_generated_query_is_safe(sql_query):
+            raise ApplicationException(f"Generated unsafe query {sql_query}")
+        
+        try:
+            result = db_conn.run_query(sql_query)
 
-        if result == None:
+        except Exception as e:
             failed_queries.append(sql_query)
             tries += 1
-        else:
-            print('success result', result)
-            db_conn.close()
-            return { "sql_query": sql_query, "result": str(result) }
+            print('failed query', sql_query, e)
+            continue
 
-    db_conn.close()
+        print('query executed successfully', result)
+        return { "sql_query": sql_query, "result": str(result) }
+
     raise ApplicationException(f"Generated but failed to execute queries: {failed_queries}")

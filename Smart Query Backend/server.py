@@ -37,6 +37,7 @@ def handle_query():
         db_conn = DatabaseConnection(db_credentials)
         response = smart_query(db_conn, environment, database, query)
         response['cost'] = calculate_cost(initial_checkpoint, get_usage_checkpoint())
+        db_conn.close()
 
     except ApplicationException as e:
         return jsonify({"error": e.message}), 400
