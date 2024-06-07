@@ -1,11 +1,10 @@
-const url = "/api/sessions"
+const url = "http://127.0.0.1:5000/api/sessions"
 
 //Environments and Databases
-const environments = ["dev", "Hyperface User Acceptance Testing Environment", "Prod"];
+const environments = ["Hyperface User Acceptance Testing Environment", "Prod"];
 const databases = {
-    "dev": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
-    "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
-    "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
+    "Hyperface User Acceptance Testing Environment": ["Database A", "Database B"],
+    "Prod": ["Database X", "Database Y", "Database Z"]
 };
 
 let sessionId = null;
@@ -295,21 +294,31 @@ function appendAnswer(answer, sqlQuery) {
     assistantMessageParagraph.textContent = answer;
     assistantContentDiv.appendChild(assistantMessageParagraph);
 
+
+    let tooltipDiv=document.createElement("div");
+    tooltipDiv.classList.add("tooltipDiv");
+
     const tooltip = document.createElement('p');
     tooltip.textContent = sqlQuery;
     tooltip.classList.add("tooltip")
+    const tooltip1 = document.createElement('p');
+    tooltip1.textContent = sqlQuery;
+    tooltip1.classList.add("tooltip")
+    tooltipDiv.append(tooltip,tooltip1)
 
     assistantMessageDiv.addEventListener('mouseover', function (event) {
-        const rect = event.target.getBoundingClientRect();
-        tooltip.style.display = 'block';
+        // const rect = event.target.getBoundingClientRect();
+        tooltipDiv.style.display = 'block';
+        tooltipDiv.classList.add('show');
     });
 
     assistantMessageDiv.addEventListener('mouseout', function () {
-        tooltip.style.display = 'none';
+        tooltipDiv.style.display = 'none';
+        tooltipDiv.classList.remove('show');
     });
     assistantMessageDiv.appendChild(assistantIdentityDiv);
     assistantMessageDiv.appendChild(assistantContentDiv);
-    chatContainer.appendChild(tooltip);
+    chatContainer.appendChild(tooltipDiv);
 
     chatContainer.appendChild(assistantMessageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
