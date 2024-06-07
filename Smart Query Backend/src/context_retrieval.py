@@ -3,6 +3,8 @@ from text_embeddings import create_embedding, get_embeddings
 from database_connection import DatabaseConnection
 import json
 from models_wrapper import get_instruct_response
+from custom_exceptions import ApplicationException
+from configuration import CONSTANTS
 
 def get_top_N_related_tables(database, query, N=8):
     query_embed = create_embedding(query)
@@ -39,7 +41,7 @@ def select_relevant_tables(db_conn, database, query):
     prompt = generate_selection_prompt(db_conn, candidates, query)
 
     invalid_output_count = 0
-    while invalid_output_count < 3:
+    while invalid_output_count < CONSTANTS.MAX_RELEVANT_TABLE_REGENERATION:
         try:
             result = get_instruct_response(prompt)
             print(result)
@@ -50,4 +52,4 @@ def select_relevant_tables(db_conn, database, query):
         except json.JSONDecodeError:
             invalid_output_count += 1
 
-    raise Exception("Invalid output from model 3 times")
+    raise ApplicationException("JSON decoding relevant tables kept failing")

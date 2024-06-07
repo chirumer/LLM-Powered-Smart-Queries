@@ -3,6 +3,12 @@ import os
 from dotenv import load_dotenv
 from database_connection import DatabaseCredentials
 from custom_exceptions import ApplicationException
+from enum import Enum
+
+
+class CONSTANTS(Enum):
+    MAX_QUERY_REGENERATION = 3
+    MAX_RELEVANT_TABLE_REGENERATION = 3
 
 
 def load_credentials():
@@ -25,8 +31,6 @@ credentials = load_credentials()
 def get_database_credentials_for_environment(environment):
     if environment in credentials:
         return credentials[environment]
-    else:
-        raise ApplicationException('No Credentials Set For This Environment')
     
 def get_all_database_credentials():
     db_credentials = []
