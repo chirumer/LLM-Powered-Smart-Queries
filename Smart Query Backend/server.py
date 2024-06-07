@@ -8,6 +8,7 @@ from database_connection import DatabaseConnection
 from configuration import get_database_credentials_for_environment, get_all_database_credentials
 from cost_estimation_module import get_usage_checkpoint, calculate_cost
 from validation import validate_query
+from custom_exceptions import ApplicationException
 
 from flask import Flask, request, jsonify
 
@@ -17,7 +18,7 @@ app = Flask(__name__)
 def handle_query():
     if not request.is_json:
         return jsonify({"error": "expecting JSON"}), 400
-    
+
     try:
         data = request.get_json()
         query = data.get('query')
@@ -28,13 +29,20 @@ def handle_query():
 
     validation_result = validate_query(query, environment, database)
     if not validation_result['is_valid']:
-        return jsonify(validation_result['reason']), 400
+        return jsonify({ "error": validation_result['reason']}), 400
 
-    initial_checkpoint = get_usage_checkpoint()
-    db_credentials = get_database_credentials_for_environment(environment)
-    db_conn = DatabaseConnection(db_credentials)
-    response = smart_query(db_conn, environment, database, query)
-    response['cost'] = calculate_cost(initial_checkpoint, get_usage_checkpoint())
+    try:
+        initial_checkpoint = get_usage_checkpoint()
+        db_credentials = get_database_credentials_for_environment(environment)
+        db_conn = DatabaseConnection(db_credentials)
+        response = smart_query(db_conn, environment, database, query)
+        response['cost'] = calculate_cost(initial_checkpoint, get_usage_checkpoint())
+
+    except ApplicationException as e:
+        return jsonify({"error": e.message}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
     return jsonify(response)
 
 if __name__ == '__main__':
