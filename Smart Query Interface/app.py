@@ -134,7 +134,7 @@ def get_model_reply(conversation, database_name):
             response_data = response.json()
             print(response_data)
             return response_data.get('result'), response_data.get('sql_query'), response_data.get('cost').get('embedding_cost'), response_data.get('cost').get('model_cost')
-        elif response.status_code == 400:
+        elif response.status_code == 400 or response.status_code == 500:
             response_data = response.json()
             return response_data.get('error'), None, 0, 0
         else:

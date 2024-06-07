@@ -9,6 +9,7 @@ from configuration import get_database_credentials_for_environment, get_all_data
 from cost_estimation_module import get_usage_checkpoint, calculate_cost
 from validation import validate_query
 from custom_exceptions import ApplicationException
+from formatting import format_query_result
 
 from flask import Flask, request, jsonify
 
@@ -36,6 +37,10 @@ def handle_query():
         db_credentials = get_database_credentials_for_environment(environment)
         db_conn = DatabaseConnection(db_credentials)
         response = smart_query(db_conn, database, query)
+        print(response)
+        print(response['result'])
+        response['result'] = format_query_result(response['result'])
+        print(response['result'])
         response['cost'] = calculate_cost(initial_checkpoint, get_usage_checkpoint())
         db_conn.close()
 

@@ -69,6 +69,4 @@ class DatabaseConnection:
             {column: process_value(value) for column, value in zip(column_names, row)}
             for row in result
         ]
-        json_result = json.dumps(json_data, indent=4)
-
-        return json_result
+        return json_data
