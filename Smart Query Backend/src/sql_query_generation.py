@@ -36,7 +36,7 @@ def text_to_sql(db_conn, database, query):
     sql_query = get_instruct_response(prompt)
     return sql_query
 
-def smart_query(db_conn, environment, database, query):
+def smart_query(db_conn, database, query):
 
     failed_queries = []
     tries = 0

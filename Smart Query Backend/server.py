@@ -35,7 +35,7 @@ def handle_query():
         initial_checkpoint = get_usage_checkpoint()
         db_credentials = get_database_credentials_for_environment(environment)
         db_conn = DatabaseConnection(db_credentials)
-        response = smart_query(db_conn, environment, database, query)
+        response = smart_query(db_conn, database, query)
         response['cost'] = calculate_cost(initial_checkpoint, get_usage_checkpoint())
         db_conn.close()
 
