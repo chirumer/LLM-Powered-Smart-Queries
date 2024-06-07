@@ -1,4 +1,5 @@
 def format_query_result(json):
+    print('format', json)
     if len(json) == 1 and len(json[0]) == 1:
         key = list(json[0].keys())[0]
         return f'<p>{json[0][key]}</p>'
