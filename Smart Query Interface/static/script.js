@@ -70,29 +70,30 @@ document.querySelectorAll(".conversation-button").forEach(button => {
 });
 //=====================================================================
 async function getMessage() {
-    const inputElement = document.getElementById("message");
-    let inputValue = inputElement.value.trim();
-    if (!inputValue) return;
-    if (sessionId == null) newSession = true;
-    if (newSession === true) {
-        if (await createSession()) {
-            sessionId += 1;
-            console.log("Session created")
+    const selected_Database = document.getElementById('envValue').value;
+    const selected_Env = document.getElementById('envValue');
+    if (selected_Database && selected_Env) {
+        const inputElement = document.getElementById("message");
+        let inputValue = inputElement.value.trim();
+        if (!inputValue) return;
+        if (sessionId == null) newSession = true;
+        if (newSession === true) {
+            if (await createSession()) {
+                sessionId += 1;
+            }
         }
-        else {
-            show_view(".new-chat-view");
-            return;
+        inputElement.value = "";
+        appendQuestion(inputValue);
+        try {
+            let response = await updateQuestions(inputValue);
+            setTimeout(() => {
+                appendAnswer(response.answer, response.metadata);
+            }, 500);
+        } catch (error) {
+            console.error('Error occurred:', error);
         }
-    }
-    inputElement.value = "";
-    appendQuestion(inputValue);
-    try {
-        let response = await updateQuestions(inputValue);
-        setTimeout(() => {
-            appendAnswer(response.answer, response.metadata);
-        }, 500);
-    } catch (error) {
-        console.error('Error occurred:', error);
+    } else {
+        alert("Please Select Enviroment or Database.")
     }
 }
 //==============================================================================
@@ -122,10 +123,6 @@ async function createSession() {
     let dataElement = document.getElementById('databaseValue');
     let databaseName = dataElement.value;
     show_view(".conversation-view");
-    if(environment==""||databaseName==""){
-        alert("Please Select Environment And DataBase");
-        return;
-    }
     try {
         const data = {
             "Environment": environment,
@@ -345,8 +342,8 @@ async function fetchDatabases(environment) {
     try {
         const response = await fetch(`http://127.0.0.1:5000/api/databases/${environment}`);
         const data = await response.json();
-        console.log("Databases",data)
-       return data;
+        console.log("Databases", data)
+        return data;
     } catch (error) {
         console.error(error)
     }
@@ -367,8 +364,8 @@ function displayEnviroment(environments) {
     envSelect.addEventListener('change', function () {
         const selectedEnv = this.value;
         let databasesPromise = fetchDatabases(selectedEnv);
-        
-        databasesPromise.then(databases => { 
+
+        databasesPromise.then(databases => {
             console.log(databases);
             console.log("databases", databases);
             dbSelect.innerHTML = '<option value=""> Database </option>';
