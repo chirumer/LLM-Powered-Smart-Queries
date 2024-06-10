@@ -73,7 +73,6 @@ async function getMessage() {
     const selected_Database = document.getElementById('databaseValue').value;
     const selected_Env = document.getElementById('envValue').value;
     if ((selected_Database && selected_Env)||newSession==false) {
-
         const inputElement = document.getElementById("message");
         let inputValue = inputElement.value.trim();
         if (!inputValue) return;
@@ -141,6 +140,11 @@ async function createSession() {
             await allSession();
             await getSession();
             newSession = false;
+
+            // make the conversation button active
+            let conversationButtons = document.getElementsByClassName("conversation-button");
+            let conversationArray = Array.from(conversationButtons);
+            conversationArray[0].parentElement.classList.add("active");
         } else console.error('Failed to create session:', response.status);
 
     } catch (error) {
