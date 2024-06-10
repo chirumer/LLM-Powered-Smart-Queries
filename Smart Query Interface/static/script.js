@@ -283,7 +283,7 @@ function appendQuestion(question) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 //=====================================================================
-function appendAnswer(answer, sqlQuery) {
+function appendAnswer(answer, metadata) {
     //  Create and append the AI generated response
     const assistantMessageDiv = document.createElement('div');
     assistantMessageDiv.classList.add('assistant', 'message');
@@ -304,14 +304,16 @@ function appendAnswer(answer, sqlQuery) {
     let tooltipDiv = document.createElement("div");
     tooltipDiv.classList.add("tooltipDiv");
     
-    const sqlLines = sqlQuery.split('\n');
+    if (metadata) {
+        const metadata_lines = metadata.split('|');
     
-    sqlLines.forEach(line => {
-        const tooltip = document.createElement('p');
-        tooltip.textContent = line;
-        tooltip.classList.add("tooltip");
-        tooltipDiv.appendChild(tooltip);
-    });
+        metadata_lines.forEach(line => {
+            const tooltip = document.createElement('p');
+            tooltip.textContent = line;
+            tooltip.classList.add("tooltip");
+            tooltipDiv.appendChild(tooltip);
+        });
+    }
 
     assistantMessageDiv.addEventListener('mouseover', function (event) {
         const rect = event.target.getBoundingClientRect();
