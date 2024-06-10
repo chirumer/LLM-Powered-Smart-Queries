@@ -163,4 +163,4 @@ def get_model_reply(conversation, database_name):
         return 'An Internal Server Error Occurred', None, 0, 0
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5005)
