@@ -4,6 +4,7 @@ let sessionId = null;
 let environment = null;
 let databaseName = null
 let newSession = false;
+let prevSession=false;
 
 const sidebar = document.querySelector("#sidebar");
 const hide_sidebar = document.querySelector(".hide-sidebar");
@@ -61,6 +62,7 @@ function show_view(view_selector) {
 new_chat_button.addEventListener("click", function () {
     show_view(".new-chat-view");
     newSession = true;
+    prevSession=false;
 });
 
 document.querySelectorAll(".conversation-button").forEach(button => {
@@ -72,7 +74,7 @@ document.querySelectorAll(".conversation-button").forEach(button => {
 async function getMessage() {
     const selected_Database = document.getElementById('databaseValue').value;
     const selected_Env = document.getElementById('envValue').value;
-    if ((selected_Database && selected_Env)||newSession==false) {
+    if ((selected_Database && selected_Env)||prevSession) {
         const inputElement = document.getElementById("message");
         let inputValue = inputElement.value.trim();
         if (!inputValue) return;
@@ -186,6 +188,7 @@ function displayHistory(data) {
             li.classList.add('active');
             sessionId = data[i].sessionId;
             getSession()
+            prevSession=true;
         })
         const fadeDiv = document.createElement('div');
         fadeDiv.classList.add('fade');
