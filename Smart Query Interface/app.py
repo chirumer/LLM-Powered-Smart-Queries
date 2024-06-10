@@ -15,11 +15,12 @@ connection = pymysql.connect(host='localhost',
                              cursorclass=pymysql.cursors.DictCursor)
 
 
-environments = ["Hyperface User Acceptance Testing Environment", "Prod"]
+environments = ["Dev", "Hyperface User Acceptance Testing Environment", "Prod"]
 databases = {
-        "Hyperface User Acceptance Testing Environment": ["Database A", "Database B"],
-        "Prod": ["Database X", "Database Y", "Database Z"]
-            }
+    "Dev": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
+    "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
+    "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"]
+}
 
 @app.route('/')
 def index():
