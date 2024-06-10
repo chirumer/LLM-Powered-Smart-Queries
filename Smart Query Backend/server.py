@@ -36,17 +36,17 @@ def handle_query():
         initial_checkpoint = get_usage_checkpoint()
         db_credentials = get_database_credentials_for_environment(environment)
         db_conn = DatabaseConnection(db_credentials)
-        # response = smart_query(db_conn, database, query)
+        response = smart_query(db_conn, database, query)
 
         # temporary dummy response
-        response = {
-            'result': [{'dummy result': 'dummy value'}],
-            'sql_query': 'SELECT * FROM table WHERE column = value',
-            'cost': {
-                'embedding_cost': 0,
-                'model_cost': 0
-            }
-        }
+        # response = {
+        #     'result': [{'dummy result': 'dummy value'}],
+        #     'sql_query': 'SELECT * FROM table WHERE column = value',
+        #     'cost': {
+        #         'embedding_cost': 0,
+        #         'model_cost': 0
+        #     }
+        # }
 
         response['result'] = format_query_result(response['result'])
         response['cost'] = calculate_cost(initial_checkpoint, get_usage_checkpoint())
