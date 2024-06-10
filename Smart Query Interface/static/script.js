@@ -70,9 +70,9 @@ document.querySelectorAll(".conversation-button").forEach(button => {
 });
 //=====================================================================
 async function getMessage() {
-    const selected_Database = document.getElementById('envValue').value;
-    const selected_Env = document.getElementById('envValue');
-    if (!selected_Database || !selected_Env) {
+    const selected_Database = document.getElementById('databaseValue').value;
+    const selected_Env = document.getElementById('envValue').value;
+    if (selected_Database && selected_Env) {
         const inputElement = document.getElementById("message");
         let inputValue = inputElement.value.trim();
         if (!inputValue) return;
@@ -93,7 +93,7 @@ async function getMessage() {
             console.error('Error occurred:', error);
         }
     } else {
-        alert("Please Select Enviroment and Database.")
+        alert("Please Select Enviroment or Database.")
     }
 }
 //==============================================================================
