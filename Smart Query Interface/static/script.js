@@ -81,6 +81,13 @@ async function getMessage() {
             if (await createSession()) {
                 sessionId += 1;
             }
+            // make the conversation button active
+            let conversationButtons = document.getElementsByClassName("conversation-button");
+            let conversationArray = Array.from(conversationButtons);
+            conversationArray[0].parentElement.classList.add("active");
+
+            // change title 
+            conversationArray[0].innerHTML = '<i class="fa fa-message fa-regular"></i> ' + inputValue;
         }
         inputElement.value = "";
         appendQuestion(inputValue);
@@ -140,11 +147,6 @@ async function createSession() {
             await allSession();
             await getSession();
             newSession = false;
-
-            // make the conversation button active
-            let conversationButtons = document.getElementsByClassName("conversation-button");
-            let conversationArray = Array.from(conversationButtons);
-            conversationArray[0].parentElement.classList.add("active");
         } else console.error('Failed to create session:', response.status);
 
     } catch (error) {
