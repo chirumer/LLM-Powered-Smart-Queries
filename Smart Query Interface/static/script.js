@@ -73,6 +73,7 @@ async function getMessage() {
     const selected_Database = document.getElementById('databaseValue').value;
     const selected_Env = document.getElementById('envValue').value;
     if ((selected_Database && selected_Env)||newSession==false) {
+
         const inputElement = document.getElementById("message");
         let inputValue = inputElement.value.trim();
         if (!inputValue) return;
@@ -86,9 +87,7 @@ async function getMessage() {
         appendQuestion(inputValue);
         try {
             let response = await updateQuestions(inputValue);
-            setTimeout(() => {
-                appendAnswer(response.answer, response.metadata);
-            }, 500);
+            appendAnswer(response.answer, response.metadata);
         } catch (error) {
             console.error('Error occurred:', error);
         }
@@ -169,7 +168,7 @@ function displayHistory(data) {
         // Create the button element with the conversation title
         const button = document.createElement('button');
         button.classList.add('conversation-button');
-        button.innerHTML = '<i class="fa fa-message fa-regular"></i> This is a Session ' + data[i].sessionId;
+        button.innerHTML = '<i class="fa fa-message fa-regular"></i> ' + data[i].session_title;
         button.addEventListener("click", function () {
             show_view(".conversation-view");
             newSession = false;

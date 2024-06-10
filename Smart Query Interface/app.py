@@ -34,7 +34,7 @@ def create_session():
         DatabaseName = data.get('DatabaseName', None)
         
         with connection.cursor() as cursor:
-            sql = "INSERT INTO sessions (conversation, Environment, DatabaseName) VALUES (%s, %s, %s)"
+            sql = "INSERT INTO sessions (conversation, Environment, DatabaseName, session_title) VALUES (%s, %s, %s, 'New Chat..')"
             cursor.execute(sql, ('[]', Environment, DatabaseName))
             connection.commit()
             sessionId = cursor.lastrowid
@@ -106,6 +106,11 @@ def add_question(sessionId):
             cursor.execute(sql, (sessionId,))
             updated_conversation = json.loads(cursor.fetchone()['conversation'])
 
+            if len(updated_conversation) == 1:
+                # update session title
+                sql = "UPDATE sessions SET session_title = %s WHERE sessionId = %s"
+                cursor.execute(sql, (question, sessionId))
+
             answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
             answer_object = {
                 "role": "assistant",
@@ -163,4 +168,4 @@ def get_model_reply(conversation, database_name):
         return 'An Internal Server Error Occurred', None, 0, 0
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5005)
