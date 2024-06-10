@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <title>ChatGPT Clone</title>
+    <title>HyperQuery</title>
 </head>
 <body>
     <nav id="sidebar">
@@ -16,15 +15,6 @@
                 <button class="hide-sidebar"><i class="fa fa-chevron-left"></i></button>
             </div>
             <ul class="conversations" id="conversations">
-                <!-- <li class="grouping">Today</li> -->
-                <!-- <li class="active">
-                    <button class="conversation-button"><i class="fa fa-message fa-regular"></i> This is a conversation title</button>
-                    <div class="fade"></div>
-                    <div class="edit-buttons">
-                        <button><i class="fa fa-edit"></i></button>
-                        <button><i class="fa fa-trash"></i></button>
-                    </div>
-                </li> -->
             </ul>
         </div>
         <div class="user-menu">
@@ -47,8 +37,6 @@
                <button class="gpt-3">
                         <select  class="env-drop" id="envValue"> 
                            <option value="">Select Environment </option>     
-                            <!-- <option value="Dev_Uat">Dev Uat</option>
-                            <option value="Prod" selected>Prod</option> -->
                           </select>
                     
                 </button>
@@ -56,8 +44,6 @@
                 <button class="gpt-4">
                         <select class="env-drop" id="databaseValue"> 
                            <option value="">Select Database </option>     
-                            <!-- <option value="Database01" selected>Database 01</option>
-                            <option value="Database02">Database 02</option> -->
                           </select> 
                 </button>
             </div>
@@ -65,28 +51,13 @@
             <div class="logo">
                 HyperQuery
             </div>
+            <h2 class="title">Interact with Databases in Natural Language Effortlessly, A Complete Text-to-SQL Solution</h2>
         </div>
 
 
         <div class="view conversation-view" >
-            <p class="database-title" id="database-title"> <i class="fa-solid fa-database"></i> DataBase 01</p>
+            <p class="database-title" id="database-title"></p>
             <div class="scroller" id="chat-container">
-            <!-- <div class="user message">
-                <div class="identity">
-                    <i class="user-icon">u</i>
-                </div>
-                <div class="content">
-                    <p>Hello, how are you?</p>
-                </div>
-            </div>
-            <div class="assistant message">
-                <div class="identity">
-                    <i class="gpt user-icon">G</i>
-                </div>
-                <div class="content">
-                    <p>I'm doing well, thank you!</p>
-                </div>
-            </div> -->
         </div>
     </div>
         <div id="message-form">

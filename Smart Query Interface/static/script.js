@@ -1,12 +1,5 @@
 const url = "/api/sessions"
 
-const environments = ["dev", "Hyperface User Acceptance Testing Environment", "Prod"];
-const databases = {
-    "dev": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
-    "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
-    "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
-};
-
 let sessionId = null;
 let environment = null;
 let databaseName = null
@@ -77,24 +70,30 @@ document.querySelectorAll(".conversation-button").forEach(button => {
 });
 //=====================================================================
 async function getMessage() {
-    const inputElement = document.getElementById("message");
-    let inputValue = inputElement.value.trim();
-    if (!inputValue) return;
-    if (sessionId == null) newSession = true;
-    if (newSession === true) {
-        if (await createSession()) {
-            sessionId += 1;
+    const selected_Database = document.getElementById('databaseValue').value;
+    const selected_Env = document.getElementById('envValue').value;
+    if (selected_Database && selected_Env) {
+        const inputElement = document.getElementById("message");
+        let inputValue = inputElement.value.trim();
+        if (!inputValue) return;
+        if (sessionId == null) newSession = true;
+        if (newSession === true) {
+            if (await createSession()) {
+                sessionId += 1;
+            }
         }
-    }
-    inputElement.value = "";
-    appendQuestion(inputValue);
-    try {
-        let response = await updateQuestions(inputValue);
-        setTimeout(() => {
-            appendAnswer(response.answer, response.metadata);
-        }, 500);
-    } catch (error) {
-        console.error('Error occurred:', error);
+        inputElement.value = "";
+        appendQuestion(inputValue);
+        try {
+            let response = await updateQuestions(inputValue);
+            setTimeout(() => {
+                appendAnswer(response.answer, response.metadata);
+            }, 500);
+        } catch (error) {
+            console.error('Error occurred:', error);
+        }
+    } else {
+        alert("Please Select Enviroment or Database.")
     }
 }
 //==============================================================================
@@ -142,7 +141,7 @@ async function createSession() {
             sessionId = result.sessionId;
             await allSession();
             await getSession();
-            newSession=false;
+            newSession = false;
         } else console.error('Failed to create session:', response.status);
 
     } catch (error) {
@@ -291,11 +290,10 @@ function appendAnswer(answer, sqlQuery) {
     const assistantContentDiv = document.createElement('div');
     assistantContentDiv.classList.add('content');
     const assistantMessageParagraph = document.createElement('p');
-    assistantMessageParagraph.textContent = answer;
+    assistantMessageParagraph.innerHTML = answer;
     assistantContentDiv.appendChild(assistantMessageParagraph);
 
-
-    let tooltipDiv=document.createElement("div");
+    let tooltipDiv = document.createElement("div");
     tooltipDiv.classList.add("tooltipDiv");
 
     const tooltip = document.createElement('p');
@@ -304,10 +302,11 @@ function appendAnswer(answer, sqlQuery) {
     const tooltip1 = document.createElement('p');
     tooltip1.textContent = sqlQuery;
     tooltip1.classList.add("tooltip")
-    tooltipDiv.append(tooltip,tooltip1)
+
+    tooltipDiv.append(tooltip, tooltip1)
 
     assistantMessageDiv.addEventListener('mouseover', function (event) {
-        // const rect = event.target.getBoundingClientRect();
+        const rect = event.target.getBoundingClientRect();
         tooltipDiv.style.display = 'block';
         tooltipDiv.classList.add('show');
     });
@@ -327,25 +326,58 @@ function appendAnswer(answer, sqlQuery) {
 let submitButton = document.getElementById("sendButton");
 submitButton.addEventListener("click", getMessage)
 //=====================================================================
-const envSelect = document.getElementById('envValue');
-const dbSelect = document.getElementById('databaseValue');
-
-environments.forEach(env => {
-    const option = document.createElement('option');
-    option.value = env;
-    option.textContent = env.replace("_", " ");
-    envSelect.appendChild(option);
-});
-
-envSelect.addEventListener('change', function () {
-    const selectedEnv = this.value;
-    dbSelect.innerHTML = '<option value=""> Database </option>';
-    if (selectedEnv && databases[selectedEnv]) {
-        databases[selectedEnv].forEach(db => {
-            const option = document.createElement('option');
-            option.value = db;
-            option.textContent = db.replace("_", " ");
-            dbSelect.appendChild(option);
-        });
+async function fetchEnvironment() {
+    try {
+        const response = await fetch('/api/environments');
+        const data = await response.json();
+        displayEnviroment(data.environments);
+    } catch (error) {
+        console.error(error)
     }
-});
+}
+fetchEnvironment()
+//=====================================================================
+async function fetchDatabases(environment) {
+    try {
+        const response = await fetch(`/api/databases/${environment}`);
+        const data = await response.json();
+        console.log("Databases", data)
+        return data;
+    } catch (error) {
+        console.error(error)
+    }
+}
+//=====================================================================
+function displayEnviroment(environments) {
+    console.log(environments);
+    const envSelect = document.getElementById('envValue');
+    const dbSelect = document.getElementById('databaseValue');
+
+    environments.forEach(env => {
+        const option = document.createElement('option');
+        option.value = env;
+        option.textContent = env.replace("_", " ");
+        envSelect.appendChild(option);
+    });
+
+    envSelect.addEventListener('change', function () {
+        const selectedEnv = this.value;
+        let databasesPromise = fetchDatabases(selectedEnv);
+
+        databasesPromise.then(databases => {
+            console.log(databases);
+            console.log("databases", databases);
+            dbSelect.innerHTML = '<option value=""> Database </option>';
+            if (selectedEnv && databases) {
+                databases.forEach(db => {
+                    const option = document.createElement('option');
+                    option.value = db;
+                    option.textContent = db.replace("_", " ");
+                    dbSelect.appendChild(option);
+                });
+            }
+        }).catch(error => {
+            console.error('Error fetching databases:', error);
+        });
+    });
+}

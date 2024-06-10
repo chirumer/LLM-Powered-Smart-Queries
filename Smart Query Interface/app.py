@@ -1,9 +1,10 @@
-from flask import Flask, request, jsonify,send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import pymysql.cursors
 import json
 import requests
-app = Flask(__name__,static_folder='static',static_url_path="")
+
+app = Flask(__name__, static_folder='static', static_url_path="")
 CORS(app)
 
 # Database connection
@@ -13,9 +14,17 @@ connection = pymysql.connect(host='localhost',
                              database='TextToSql',
                              cursorclass=pymysql.cursors.DictCursor)
 
+
+environments = ["Dev", "Hyperface User Acceptance Testing Environment", "Prod"]
+databases = {
+    "Dev": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
+    "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
+    "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"]
+}
+
 @app.route('/')
 def index():
-    return send_from_directory("static","index.html")
+    return send_from_directory("static", "index.html")
 
 @app.route('/api/sessions', methods=['POST'])
 def create_session():
@@ -38,7 +47,6 @@ def create_session():
             return jsonify(session), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/api/sessions', methods=['GET'])
 def get_sessions():
@@ -98,7 +106,6 @@ def add_question(sessionId):
             cursor.execute(sql, (sessionId,))
             updated_conversation = json.loads(cursor.fetchone()['conversation'])
 
-            print(session['databaseName'])
             answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
             answer_object = {
                 "role": "assistant",
@@ -113,11 +120,22 @@ def add_question(sessionId):
 
             metadata = f"SQL Query: {sql_query};\nEmbedding Cost: {embedding_cost};\nModel Cost: {model_cost}"
 
-            return jsonify({"answer": answer,"metadata":metadata}), 201
+            return jsonify({ "answer": answer,"metadata": metadata }), 201
+        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/api/environments', methods=['GET'])
+def get_environments():
+    return jsonify(environments=environments)
 
-
+@app.route('/api/databases/<environment>', methods=['GET'])
+def get_databases(environment):
+    if environment in databases:
+        return jsonify(databases[environment])
+    else:
+        return jsonify(error='Environment not found'), 404
+    
 def get_model_reply(conversation, database_name):
     query = conversation[-1]['content']
     url = "http://localhost:3000/query"

@@ -376,6 +376,9 @@ main .view {
     margin-left: 110px;
     border: 1px solid rgb(145, 142, 142);
     border-radius: 6px;
+    position: absolute;
+    z-index: 3;
+    background:#000000;
 }
 
 .tooltip {
@@ -539,8 +542,6 @@ select {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-
-
 .database-title {
     font-size: 25px;
     padding: 20px;
@@ -548,3 +549,30 @@ select {
     text-align: center;
     color: #fff;
 }
+
+/* ================table styling ========================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    border: 1px solid white;
+}
+
+table thead th {
+    color: white;
+    padding: 10px;
+    border: 2px solid #ddd;
+}
+
+table tbody td {
+    border: 1px solid #fff;
+    border-collapse: collapse;
+    padding: 5px;
+}
+
+table tbody td:nth-child(1) {
+    font-weight: bold;
+}
+
