@@ -1,4 +1,4 @@
-const url = "http://127.0.0.1:5000/api/sessions"
+const url = "/api/sessions"
 
 let sessionId = null;
 let environment = null;
@@ -329,7 +329,7 @@ submitButton.addEventListener("click", getMessage)
 //=====================================================================
 async function fetchEnvironment() {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/api/environments`);
+        const response = await fetch('/api/environments');
         const data = await response.json();
         displayEnviroment(data.environments);
     } catch (error) {
@@ -340,7 +340,7 @@ fetchEnvironment()
 //=====================================================================
 async function fetchDatabases(environment) {
     try {
-        const response = await fetch(`http://127.0.0.1:5000/api/databases/${environment}`);
+        const response = await fetch(`/api/databases/${environment}`);
         const data = await response.json();
         console.log("Databases", data)
         return data;

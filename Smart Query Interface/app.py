@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import pymysql.cursors
 import json
+import requests
 
 app = Flask(__name__, static_folder='static', static_url_path="")
 CORS(app)
@@ -105,12 +106,11 @@ def add_question(sessionId):
             updated_conversation = json.loads(cursor.fetchone()['conversation'])
 
             # Dummy reply
-            answer = get_model_reply(updated_conversation)
-            sqlQuery = "SELECT * FROM SESSIONS This is a dummy sql query"
+            answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
             answer_object = {
                 "role": "assistant",
                 "content": answer,
-                "metadata": sqlQuery
+                "metadata":sql_query
             }
             # Update conversation in the database with answer
             updated_conversation.append(answer_object)
@@ -118,183 +118,10 @@ def add_question(sessionId):
             cursor.execute(sql, (json.dumps(updated_conversation), sessionId))
             connection.commit()
 
-            return jsonify({
-                "answer": """<table>
-                <thead>
-                    <tr>
-                        <th>COLUMN_NAME</th>
-                        <th>DATA_TYPE</th>
-                        <th>IS_NULLABLE</th>
-                        <th>COLUMN_KEY</th>
-                        <th>COLUMN_DEFAULT</th>
-                        <th>EXTRA</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>account_creation_date</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>block_code</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>block_code1</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>block_code2</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>card_block_code</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>card_creation_date</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>card_holder_type</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>card_last_four</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>created_at</td>
-                        <td>datetime</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>customer_number</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>first_name</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>id</td>
-                        <td>bigint</td>
-                        <td>NO</td>
-                        <td>PRI</td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>int_status</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>last_updated</td>
-                        <td>datetime</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>logo</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>metadata</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>mobile_number</td>
-                        <td>varbinary</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>prev_logo</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>relationship_number</td>
-                        <td>varchar</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td>status</td>
-                        <td>enum</td>
-                        <td>YES</td>
-                        <td></td>
-                        <td>None</td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>""",
-                "metadata": sqlQuery
-            }), 201
+            metadata = f"SQL Query: {sql_query};\nEmbedding Cost: {embedding_cost};\nModel Cost: {model_cost}"
+
+            return jsonify({ "answer": answer,"metadata": metadata }), 201
+        
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
@@ -309,8 +136,31 @@ def get_databases(environment):
     else:
         return jsonify(error='Environment not found'), 404
     
-def get_model_reply(conversation):
-    return f"Dummy reply for {conversation[-1]['content']}"
+def get_model_reply(conversation, database_name):
+    query = conversation[-1]['content']
+    url = "http://localhost:3000/query"
+    data = {
+        "query": query,
+        "environment": "dev",
+        "database": database_name
+    }
+    headers = {"Content-Type": "application/json"}
+    
+    try:
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            response_data = response.json()
+            print(response_data)
+            return response_data.get('result'), response_data.get('sql_query'), response_data.get('cost').get('embedding_cost'), response_data.get('cost').get('model_cost')
+        elif response.status_code == 400 or response.status_code == 500:
+            response_data = response.json()
+            return response_data.get('error'), None, 0, 0
+        else:
+            print(f"Error: Received status code {response.status_code}")
+            return 'An Internal Server Error Occurred', None, 0, 0
+    except requests.RequestException as e:
+        print(f"An error occurred: {str(e)}")
+        return 'An Internal Server Error Occurred', None, 0, 0
 
 if __name__ == '__main__':
     app.run(debug=True)
