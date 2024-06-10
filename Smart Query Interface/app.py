@@ -106,7 +106,6 @@ def add_question(sessionId):
             cursor.execute(sql, (sessionId,))
             updated_conversation = json.loads(cursor.fetchone()['conversation'])
 
-            # Dummy reply
             answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
             answer_object = {
                 "role": "assistant",
