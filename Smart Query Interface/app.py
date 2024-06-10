@@ -118,7 +118,7 @@ def add_question(sessionId):
             cursor.execute(sql, (json.dumps(updated_conversation), sessionId))
             connection.commit()
 
-            metadata = f"SQL Query: {sql_query};\nEmbedding Cost: {embedding_cost};\nModel Cost: {model_cost}"
+            metadata = f"SQL Query: {sql_query}\nEmbedding Cost: {embedding_cost};\nModel Cost: {model_cost}"
 
             return jsonify({ "answer": answer,"metadata": metadata }), 201
         

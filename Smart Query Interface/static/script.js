@@ -295,12 +295,15 @@ function appendAnswer(answer, sqlQuery) {
 
     let tooltipDiv = document.createElement("div");
     tooltipDiv.classList.add("tooltipDiv");
-
-    const tooltip = document.createElement('p');
-    tooltip.textContent = sqlQuery;
-    tooltip.classList.add("tooltip")
-
-    tooltipDiv.append(tooltip)
+    
+    const sqlLines = sqlQuery.split('\n');
+    
+    sqlLines.forEach(line => {
+        const tooltip = document.createElement('p');
+        tooltip.textContent = line;
+        tooltip.classList.add("tooltip");
+        tooltipDiv.appendChild(tooltip);
+    });
 
     assistantMessageDiv.addEventListener('mouseover', function (event) {
         const rect = event.target.getBoundingClientRect();
