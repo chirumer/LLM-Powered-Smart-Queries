@@ -73,8 +73,5 @@ def get_embeddings(database, path=EMBEDDINGS_PATH):
         if db_name == database:
             with open(path + file, 'r') as f:
                 embeds[file.replace('.json', '')] = json.load(f)
-
-    if not embeds:
-        raise ApplicationException(f'No eligible tables found for database {database}')
     
     return embeds

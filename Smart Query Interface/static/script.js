@@ -293,7 +293,6 @@ function appendAnswer(answer, sqlQuery) {
     assistantMessageParagraph.innerHTML = answer;
     assistantContentDiv.appendChild(assistantMessageParagraph);
 
-
     let tooltipDiv = document.createElement("div");
     tooltipDiv.classList.add("tooltipDiv");
 
