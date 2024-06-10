@@ -299,11 +299,8 @@ function appendAnswer(answer, sqlQuery) {
     const tooltip = document.createElement('p');
     tooltip.textContent = sqlQuery;
     tooltip.classList.add("tooltip")
-    const tooltip1 = document.createElement('p');
-    tooltip1.textContent = sqlQuery;
-    tooltip1.classList.add("tooltip")
 
-    tooltipDiv.append(tooltip, tooltip1)
+    tooltipDiv.append(tooltip)
 
     assistantMessageDiv.addEventListener('mouseover', function (event) {
         const rect = event.target.getBoundingClientRect();

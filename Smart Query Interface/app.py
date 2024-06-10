@@ -17,7 +17,7 @@ connection = pymysql.connect(host='localhost',
 
 environments = ["Dev", "Hyperface User Acceptance Testing Environment", "Prod"]
 databases = {
-    "Dev": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
+    "Dev": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev", "test"],
     "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
     "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"]
 }
