@@ -1,7 +1,7 @@
 import os
 import sys
 sys.path.append(os.path.abspath('src'))
-from sql_query_generation import smart_query
+from assistant import assistant_reply
 from cost_estimation_module import get_usage_checkpoint, calculate_cost
 from text_embeddings import update_embeddings
 from database_connection import DatabaseConnection
@@ -36,7 +36,7 @@ def handle_query():
         initial_checkpoint = get_usage_checkpoint()
         db_credentials = get_database_credentials_for_environment(environment)
         db_conn = DatabaseConnection(db_credentials)
-        response = smart_query(db_conn, database, query)
+        response = assistant_reply(db_conn, database, query)
 
         # temporary dummy response
         # response = {

@@ -3,7 +3,7 @@ from text_embeddings import create_embedding, get_embeddings
 from database_connection import DatabaseConnection
 import json
 from models_wrapper import get_instruct_response
-from custom_exceptions import ApplicationException
+from custom_exceptions import ApplicationException, QueryGenerationFail
 from configuration import CONSTANTS
 
 def get_top_N_related_tables(database, query, N=8):
@@ -12,17 +12,17 @@ def get_top_N_related_tables(database, query, N=8):
 
     embeds = get_embeddings(database)
 
-    score = []
+    score_dict = {}
     for table, embedding in embeds.items():
-        score.append((table, relatedness_fn(query_embed, embedding)))
+        score_dict[table] = relatedness_fn(query_embed, embedding)
 
-    score.sort(key=lambda x: x[1], reverse=True)
-    return score[:N]
+    sorted_score_dict = dict(sorted(score_dict.items(), key=lambda item: item[1], reverse=True)[:N])
+    return sorted_score_dict
 
 def generate_selection_prompt(db_conn, candidates, query):
     
     prompt = 'Here are the tables available:\n'
-    for table, _ in candidates:
+    for table in candidates:
         schema = db_conn.describe_table(*table.split('.'))
         fields = [column[0] for column in schema]
         prompt += f'{table}: {", ".join(fields)}\n'
@@ -46,6 +46,20 @@ def select_relevant_tables(db_conn, database, query):
             result = get_instruct_response(prompt)
             print(result)
             result = json.loads(result)
+            for i in result:
+
+                # check for hallucination
+                if i not in candidates:
+                    raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
+                
+                # check for low confidence
+                max_confidence = 0
+                for i in result:
+                    if candidates[i] > max_confidence:
+                        max_confidence = candidates[i]
+                if max_confidence < CONSTANTS.CONFIDENCE_THRESHOLD:
+                    raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
+
             print('successfully found relevant tables')
             return result
 

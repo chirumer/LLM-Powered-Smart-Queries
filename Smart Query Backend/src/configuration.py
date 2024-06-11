@@ -9,6 +9,7 @@ from enum import IntEnum
 class CONSTANTS(IntEnum):
     MAX_QUERY_REGENERATION = 3
     MAX_RELEVANT_TABLE_REGENERATION = 3
+    CONFIDENCE_THRESHOLD = 0.3
 
 
 def load_credentials():
