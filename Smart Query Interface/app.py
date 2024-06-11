@@ -33,17 +33,20 @@ def create_session():
         data = request.json
         Environment = data.get('Environment', None)
         DatabaseName = data.get('DatabaseName', None)
+        Model = data.get('Model', None)
         
         with connection.cursor() as cursor:
-            sql = "INSERT INTO sessions (conversation, Environment, DatabaseName, session_title) VALUES (%s, %s, %s, 'New Chat..')"
-            cursor.execute(sql, ('[]', Environment, DatabaseName))
+            sql = "INSERT INTO sessions (conversation, Environment, DatabaseName, session_title, model_name) VALUES (%s, %s, %s, 'New Chat..', %s)"
+            cursor.execute(sql, ('[]', Environment, DatabaseName, Model))
             connection.commit()
             sessionId = cursor.lastrowid
             session = {
                 "sessionId": str(sessionId),
                 "conversation": [],
                 "Environment": Environment,
-                "DatabaseName": DatabaseName
+                "DatabaseName": DatabaseName,
+                "session_title": "New Chat..",
+                "model_name": Model
             }
             return jsonify(session), 201
     except Exception as e:

@@ -136,11 +136,14 @@ async function createSession() {
     let environment = envElement.value;
     let dataElement = document.getElementById('databaseValue');
     let databaseName = dataElement.value;
+    let modelElement = document.getElementById('modelValue');
+    let model = modelElement.value;
     show_view(".conversation-view");
     try {
         const data = {
             "Environment": environment,
-            "DatabaseName": databaseName
+            "DatabaseName": databaseName,
+            "Model": model
         };
         console.log("Environment: ", data)
         const response = await fetch(url, {
