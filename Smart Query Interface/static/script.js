@@ -124,7 +124,10 @@ async function getSession() {
         const data = await response.json();
         const conversationArray = JSON.parse(data.conversation);
         let databaseTitleElement = document.getElementById('database-title');
-        databaseTitleElement.innerHTML = '<i class="fa-solid fa-rocket"></i> ' + data.environment + ",  " + '<i class="fa-solid fa-database"></i> ' + data.databaseName;
+        databaseTitleElement.innerHTML = 
+        '<i class="fa-solid fa-code" style="margin-right: 3px;"></i> <span style="margin-right: 25px;">' + data.environment + '</span>' + 
+        '<i class="fa-solid fa-database" style="margin-right: 3px;"></i> <span style="margin-right: 25px;">' + data.databaseName + '</span>' + 
+        '<i class="fa-solid fa-robot" style="margin-right: 3px;"></i> <span style="margin-right: 25px;">' + data.model_name + '</span>';    
         displayChat(conversationArray);
     } catch (error) {
         console.error(error)
