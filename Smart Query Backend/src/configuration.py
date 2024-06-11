@@ -6,9 +6,10 @@ from custom_exceptions import ApplicationException
 from enum import IntEnum
 
 
-class CONSTANTS(IntEnum):
+class CONSTANTS():
     MAX_QUERY_REGENERATION = 3
     MAX_RELEVANT_TABLE_REGENERATION = 3
+    CONFIDENCE_THRESHOLD = 0.3
 
 
 def load_credentials():

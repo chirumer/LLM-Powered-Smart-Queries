@@ -129,7 +129,7 @@ def add_question(sessionId):
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
 @app.route('/api/environments', methods=['GET'])
 def get_environments():
     return jsonify(environments=environments)
