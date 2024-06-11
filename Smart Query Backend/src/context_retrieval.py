@@ -44,8 +44,11 @@ def select_relevant_tables(db_conn, database, query):
     while invalid_output_count < CONSTANTS.MAX_RELEVANT_TABLE_REGENERATION:
         try:
             result = get_instruct_response(prompt)
-            print(result)
-            result = json.loads(result)
+            print(f'result: [{result}]')
+            if not result:
+                result = []
+            else:
+                result = json.loads(result)
 
             # none selected
             if not result:
