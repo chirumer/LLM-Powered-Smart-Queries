@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 sys.path.append(os.path.abspath('src'))
 from assistant import assistant_reply
 from cost_estimation_module import get_usage_checkpoint, calculate_cost
@@ -53,8 +54,10 @@ def handle_query():
         db_conn.close()
 
     except ApplicationException as e:
+        print(traceback.format_exc())
         return jsonify({"error": e.message}), 400
     except Exception as e:
+        print(traceback.format_exc())
         return jsonify({"error": f'unexpected error: {str(e)}'}), 500
 
     return jsonify(response)
