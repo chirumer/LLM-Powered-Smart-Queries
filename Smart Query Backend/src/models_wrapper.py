@@ -18,7 +18,9 @@ def get_instruct_response(prompt):
         prompt=prompt,
         max_tokens=150
     )
+    print(f'Instruct FULL response: {response}')
     update_model_input_usage(response.usage.prompt_tokens)
     update_model_output_usage(response.usage.completion_tokens)
 
+    print(f'Instruct response: {response.choices[0].text.strip()}')
     return response.choices[0].text.strip()

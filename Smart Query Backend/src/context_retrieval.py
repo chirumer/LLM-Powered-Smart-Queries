@@ -46,12 +46,13 @@ def select_relevant_tables(db_conn, database, query):
             result = get_instruct_response(prompt)
             print(result)
             result = json.loads(result)
-            for i in result:
 
-                # none selected
-                if not result:
-                    print('no tables selected')
-                    raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
+            # none selected
+            if not result:
+                print('no tables selected')
+                raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
+
+            for i in result:
 
                 # check for hallucination
                 if i not in candidates:
