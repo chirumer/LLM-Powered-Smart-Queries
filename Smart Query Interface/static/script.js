@@ -74,7 +74,14 @@ document.querySelectorAll(".conversation-button").forEach(button => {
 async function getMessage() {
     const selected_Database = document.getElementById('databaseValue').value;
     const selected_Env = document.getElementById('envValue').value;
+    const selected_Model = document.getElementById('modelValue').value;
     if ((selected_Database && selected_Env)||prevSession) {
+
+        if (!selected_Model) {
+            alert("Please Select Model")
+            return;
+        }
+
         const inputElement = document.getElementById("message");
         let inputValue = inputElement.value.trim();
         if (!inputValue) return;
@@ -347,6 +354,17 @@ async function fetchEnvironment() {
 }
 fetchEnvironment()
 //=====================================================================
+async function fetchModels() {
+    try {
+        const response = await fetch('/api/available_models');
+        const data = await response.json();
+        displayModels(data.available_models);
+    } catch (error) {
+        console.error(error)
+    }
+}
+fetchModels()
+//=====================================================================
 async function fetchDatabases(environment) {
     try {
         const response = await fetch(`/api/databases/${environment}`);
@@ -389,5 +407,15 @@ function displayEnviroment(environments) {
         }).catch(error => {
             console.error('Error fetching databases:', error);
         });
+    });
+}
+//=====================================================================
+function displayModels(models) {
+    const modelSelect = document.getElementById('modelValue');
+    models.forEach(model => {
+        const option = document.createElement('option');
+        option.value = model;
+        option.textContent = model;
+        modelSelect.appendChild(option);
     });
 }

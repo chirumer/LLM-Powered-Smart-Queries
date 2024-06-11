@@ -21,6 +21,7 @@ databases = {
     "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
     "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"]
 }
+available_models = ["gpt-3.5-turbo", "gemini-1.5-flash"]
 
 @app.route('/')
 def index():
@@ -133,6 +134,10 @@ def add_question(sessionId):
 @app.route('/api/environments', methods=['GET'])
 def get_environments():
     return jsonify(environments=environments)
+
+@app.route('/api/available_models', methods=['GET'])
+def get_available_models():
+    return jsonify(available_models=available_models)
 
 @app.route('/api/databases/<environment>', methods=['GET'])
 def get_databases(environment):
