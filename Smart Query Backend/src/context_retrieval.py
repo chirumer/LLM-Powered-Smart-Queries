@@ -50,6 +50,7 @@ def select_relevant_tables(db_conn, database, query):
 
                 # check for hallucination
                 if i not in candidates:
+                    print(f'hallucinated table found: {i}')
                     raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
                 
                 # check for low confidence
@@ -57,7 +58,9 @@ def select_relevant_tables(db_conn, database, query):
                 for i in result:
                     if candidates[i] > max_confidence:
                         max_confidence = candidates[i]
+                print(f'confidence in tables selection: {max_confidence}')
                 if max_confidence < CONSTANTS.CONFIDENCE_THRESHOLD:
+                    print(f'max confidence in selection too low: {max_confidence}')
                     raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
 
             print('successfully found relevant tables')
