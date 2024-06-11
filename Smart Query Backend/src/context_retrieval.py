@@ -1,10 +1,10 @@
 from scipy import spatial
 from text_embeddings import create_embedding, get_embeddings
-from database_connection import DatabaseConnection
 import json
 from models_wrapper import get_instruct_response
 from custom_exceptions import ApplicationException, QueryGenerationFail
 from configuration import CONSTANTS
+from validation import get_validated_relevant_tables
 
 def get_top_N_related_tables(database, query, N=8):
     query_embed = create_embedding(query)
@@ -44,38 +44,13 @@ def select_relevant_tables(db_conn, database, query):
     while invalid_output_count < CONSTANTS.MAX_RELEVANT_TABLE_REGENERATION:
         try:
             result = get_instruct_response(prompt)
-            print(f'result: [{result}]')
-            if not result:
-                result = []
-            else:
-                result = json.loads(result)
-
-            # none selected
-            if not result:
-                print('no tables selected')
-                raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
-
-            for i in result:
-
-                # check for hallucination
-                if i not in candidates:
-                    print(f'hallucinated table found: {i}')
-                    raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
-                
-                # check for low confidence
-                max_confidence = 0
-                for i in result:
-                    if candidates[i] > max_confidence:
-                        max_confidence = candidates[i]
-                print(f'confidence in tables selection: {max_confidence}')
-                if max_confidence < CONSTANTS.CONFIDENCE_THRESHOLD:
-                    print(f'max confidence in selection too low: {max_confidence}')
-                    raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
-
-            print('successfully found relevant tables')
-            return result
+            validated_result = get_validated_relevant_tables(result, candidates)
+            return validated_result
 
         except json.JSONDecodeError:
             invalid_output_count += 1
+
+        except QueryGenerationFail as e:
+            raise e
 
     raise ApplicationException("JSON decoding relevant tables kept failing")
