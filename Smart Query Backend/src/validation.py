@@ -56,6 +56,7 @@ def get_validated_relevant_tables(result, candidates):
         if candidates[i] > max_confidence:
             max_confidence = candidates[i]
     
+    # verify confidence again, this time for selected tables
     print(f'confidence in tables selection: {max_confidence}')
     if max_confidence < CONSTANTS.CONFIDENCE_THRESHOLD:
         print(f'max confidence in selection too low: {max_confidence}')

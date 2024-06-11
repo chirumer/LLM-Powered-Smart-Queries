@@ -40,6 +40,15 @@ def select_relevant_tables(db_conn, database, query):
     candidates = get_top_N_related_tables(database, query)
     prompt = generate_selection_prompt(db_conn, candidates, query)
 
+    # go ahead with generation only if confidence threshold is met
+    max_confidence = 0
+    for i in candidates:
+        if candidates[i] > max_confidence:
+            max_confidence = candidates[i]
+    print(f'max confidence in tables pre-selection: {max_confidence}')
+    if max_confidence < CONSTANTS.CONFIDENCE_THRESHOLD:
+        raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
+
     invalid_output_count = 0
     while invalid_output_count < CONSTANTS.MAX_RELEVANT_TABLE_REGENERATION:
         try:
@@ -53,4 +62,5 @@ def select_relevant_tables(db_conn, database, query):
         except QueryGenerationFail as e:
             raise e
 
-    raise ApplicationException("JSON decoding relevant tables kept failing")
+    # most likely no relevant tables for this query
+    raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
