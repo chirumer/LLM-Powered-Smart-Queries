@@ -1,4 +1,4 @@
-### sample curl:
+### sample curl (for backend):
 
 curl -X POST -H "Content-Type: application/json" -d '{
   "query": "Tell me the mobile number of the customer with customer number 0007224787800000659700",
@@ -6,7 +6,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
   "database": "all"
 }' http://127.0.0.1:3000/query
 
-### sample response:
+### sample response (from backend):
 {
   "cost": {
     "embedding_cost": "Rs. 0.00003",
