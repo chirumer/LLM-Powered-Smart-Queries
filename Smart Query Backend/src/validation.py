@@ -3,7 +3,7 @@ from configuration import get_database_credentials_for_environment
 from text_embeddings import get_embeddings
 import sqlparse
 from custom_exceptions import QueryGenerationFail
-
+from configuration import CONSTANTS
 
 
 
@@ -36,6 +36,13 @@ def get_validated_relevant_tables(result, candidates):
     
     result = json.loads(result) 
     if not isinstance(result, list):
+        raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
+    
+    # no tables selected
+    if not result:
+        raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
+    
+    if not all(isinstance(i, str) for i in result):
         raise QueryGenerationFail(QueryGenerationFail.Reason.NOT_ENOUGH_CONTEXT)
 
     max_confidence = 0
