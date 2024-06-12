@@ -10,7 +10,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
 {
   "cost": {
     "embedding_cost": "Rs. 0.00003",
-    "model_cost": "Rs. 0.92134"
+    "model_cost": "Rs. 0.14537"
   },
   "result": "[]",
   "sql_query": "SELECT mobile FROM hyperface_dev_db.customer WHERE id = '0007224787800000659700'"
