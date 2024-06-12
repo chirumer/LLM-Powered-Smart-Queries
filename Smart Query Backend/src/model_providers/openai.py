@@ -30,10 +30,10 @@ def get_instruct_response(prompt):
     }
 
 usd_to_inr = 83.5
-embedding_tokens_per_dollar = 0.02/10**6
-model_input_tokens_per_dollar = 3/10**6
-model_output_tokens_per_dollar = 6/10**6
+dollar_per_embedding_token = 0.02/10**6
+dollar_per_model_input_token = 1.5/10**6
+dollar_per_model_output_token = 2/10**6
 
-embedding_tokens_per_rupee = embedding_tokens_per_dollar * usd_to_inr
-model_input_tokens_per_rupee = model_input_tokens_per_dollar * usd_to_inr
-model_output_tokens_per_rupee = model_output_tokens_per_dollar * usd_to_inr
+rupees_per_embedding_token = dollar_per_embedding_token * usd_to_inr
+rupees_per_model_input_token = dollar_per_model_input_token * usd_to_inr
+rupees_per_model_output_token = dollar_per_model_output_token * usd_to_inr

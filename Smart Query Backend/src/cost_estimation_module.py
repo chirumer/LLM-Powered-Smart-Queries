@@ -23,37 +23,37 @@ def convert_embedding_usage_to_cost(model, usage):
     model_provider = model.split(' | ')[0]
 
     if model_provider == 'openai':
-        embedding_tokens_per_rupee = openai.embedding_tokens_per_rupee
+        rupees_per_embedding_token = openai.rupees_per_embedding_token
     elif model_provider == 'google':
-        embedding_tokens_per_rupee = google.embedding_tokens_per_rupee
+        rupees_per_embedding_token = google.rupees_per_embedding_token
     else:
         raise ApplicationException(f'Unknown model provider: {model_provider}')
 
-    return usage * embedding_tokens_per_rupee
+    return usage * rupees_per_embedding_token
 
 def convert_model_input_usage_to_cost(model, usage):
     model_provider = model.split(' | ')[0]
 
     if model_provider == 'openai':
-        model_input_tokens_per_rupee = openai.model_input_tokens_per_rupee
+        rupees_per_model_input_token = openai.rupees_per_model_input_token
     elif model_provider == 'google':
-        model_input_tokens_per_rupee = google.model_input_tokens_per_rupee
+        rupees_per_model_input_token = google.rupees_per_model_input_token
     else:
         raise ApplicationException(f'Unknown model provider: {model_provider}')
 
-    return usage * model_input_tokens_per_rupee
+    return usage * rupees_per_model_input_token
 
 def convert_model_output_usage_to_cost(model, usage):
     model_provider = model.split(' | ')[0]
 
     if model_provider == 'openai':
-        model_output_tokens_per_rupee = openai.model_output_tokens_per_rupee
+        rupees_per_model_output_token = openai.rupees_per_model_output_token
     elif model_provider == 'google':
-        model_output_tokens_per_rupee = google.model_output_tokens_per_rupee
+        rupees_per_model_output_token = google.rupees_per_model_output_token
     else:
         raise ApplicationException(f'Unknown model provider: {model_provider}')
 
-    return usage * model_output_tokens_per_rupee
+    return usage * rupees_per_model_output_token
 
 def convert_model_usage_to_cost(model, model_input_usage, model_output_usage):
     return convert_model_input_usage_to_cost(model, model_input_usage) + convert_model_output_usage_to_cost(model, model_output_usage)
