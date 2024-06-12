@@ -116,10 +116,12 @@ def add_question(sessionId):
                 cursor.execute(sql, (question, sessionId))
 
             answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
+            metadata = f"SQL Query: {sql_query} | Embedding Cost: {embedding_cost} | Model Cost: {model_cost}"
+            
             answer_object = {
                 "role": "assistant",
                 "content": answer,
-                "metadata":sql_query
+                "metadata":metadata
             }
             # Update conversation in the database with answer
             updated_conversation.append(answer_object)
@@ -127,7 +129,7 @@ def add_question(sessionId):
             cursor.execute(sql, (json.dumps(updated_conversation), sessionId))
             connection.commit()
 
-            metadata = f"SQL Query: {sql_query} | Embedding Cost: {embedding_cost} | Model Cost: {model_cost}"
+            
 
             return jsonify({ "answer": answer,"metadata": metadata }), 201
         

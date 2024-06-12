@@ -77,7 +77,7 @@ async function getMessage() {
     const selected_Model = document.getElementById('modelValue').value;
     if ((selected_Database && selected_Env)||prevSession) {
 
-        if (!selected_Model) {
+        if (!selected_Model && !prevSession) {
             alert("Please Select Model")
             return;
         }
