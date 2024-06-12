@@ -4,6 +4,7 @@ class Request_data:
         self.database = database
         self.query = query
         self.model = model
+        self.embedding_model = "openai | text-embedding-3-small"
         self.usage_data = {
             'embedding': 0,
             'model_input': 0,

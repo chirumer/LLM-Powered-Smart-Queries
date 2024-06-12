@@ -33,7 +33,7 @@ def text_to_sql_prompt(request_data):
 
 def text_to_sql(request_data):
     prompt = text_to_sql_prompt(request_data)
-    sql_query = get_instruct_response(prompt, request_data.usage_data)
+    sql_query = get_instruct_response(prompt, request_data)
     return sql_query
 
 def smart_query(request_data):

@@ -7,7 +7,7 @@ from configuration import CONSTANTS
 from validation import get_validated_relevant_tables
 
 def get_top_N_related_tables(request_data, N=8):
-    query_embed = create_embedding(request_data.query, request_data.usage_data)
+    query_embed = create_embedding(request_data.query, request_data)
     relatedness_fn = lambda x, y: 1 - spatial.distance.cosine(x, y)
 
     embeds = get_embeddings(request_data.database)
@@ -52,7 +52,7 @@ def select_relevant_tables(request_data):
     invalid_output_count = 0
     while invalid_output_count < CONSTANTS.MAX_RELEVANT_TABLE_REGENERATION:
         try:
-            result = get_instruct_response(prompt, request_data.usage_data)
+            result = get_instruct_response(prompt, request_data)
             validated_result = get_validated_relevant_tables(result, candidates)
             return validated_result
 
