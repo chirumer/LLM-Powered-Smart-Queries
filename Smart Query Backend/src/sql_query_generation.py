@@ -28,12 +28,12 @@ def text_to_sql_prompt(request_data):
         prompt += format_schema(schema)
     prompt += '\n'
 
-    prompt += f"Please write the SQL query to solve the following query. Give me JUST the executable query and nothing else, no extra characters either:\n{request_data.query}\n"
+    prompt += f"Please write the SQL query to solve the following query. Give me JUST the executable query and nothing else, NO extra characters and NO formatting:\n{request_data.query}\n"
     return prompt
 
 def text_to_sql(request_data):
     prompt = text_to_sql_prompt(request_data)
-    sql_query = get_instruct_response(prompt, request_data.usage_data)
+    sql_query = get_instruct_response(prompt, request_data)
     return sql_query
 
 def smart_query(request_data):

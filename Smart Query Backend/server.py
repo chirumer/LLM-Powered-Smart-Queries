@@ -3,11 +3,10 @@ import sys
 import traceback
 sys.path.append(os.path.abspath('src'))
 from assistant import assistant_reply
-from cost_estimation_module import get_usage_checkpoint, calculate_cost
+from cost_estimation_module import calculate_cost
 from text_embeddings import update_embeddings
 from database_connection import DatabaseConnection
 from configuration import get_database_credentials_for_environment, get_all_database_credentials
-from cost_estimation_module import get_usage_checkpoint, calculate_cost
 from validation import validate_query
 from custom_exceptions import ApplicationException
 from formatting import format_query_result
@@ -44,7 +43,7 @@ def handle_query():
         response = assistant_reply(request_data)
 
         response['result'] = format_query_result(response['result'])
-        response['cost'] = calculate_cost(initial_checkpoint, request_data.get_usage_data())
+        response['cost'] = calculate_cost(request_data, initial_checkpoint)
         db_conn.close()
 
     except ApplicationException as e:
@@ -59,10 +58,6 @@ def handle_query():
 if __name__ == '__main__':
     for db_credentials in get_all_database_credentials():
         db_conn = DatabaseConnection(db_credentials)
-        
-        initial_checkpoint = get_usage_checkpoint()
         update_embeddings(db_conn)
-        cost = calculate_cost(initial_checkpoint, get_usage_checkpoint())
-        print('cost for updating embeddings:', cost['embedding_cost'], sep='')
 
     app.run(debug=True, port=3000)

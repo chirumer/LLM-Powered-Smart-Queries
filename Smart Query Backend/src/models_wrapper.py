@@ -1,26 +1,39 @@
 from openai import OpenAI
 from cost_estimation_module import update_embedding_usage, update_model_input_usage, update_model_output_usage
+from model_providers import openai
+from model_providers import google
+from custom_exceptions import ApplicationException
 
 client = OpenAI()
 EMBEDDING_MODEL = "text-embedding-3-small"
 LANGUAGE_MODEL = "gpt-3.5-turbo-instruct"
 
 
-def create_embedding(data, usage_data):
-    response = client.embeddings.create(model=EMBEDDING_MODEL, input=[data])
-    update_embedding_usage(usage_data, response.usage.total_tokens)
-    embedding = [e.embedding for e in response.data][0]
-    return embedding
+def create_embedding(data, request_data):
+    model_provider = request_data.embedding_model.split(' | ')[0]
 
-def get_instruct_response(prompt, usage_data):
-    response = client.completions.create(
-        model=LANGUAGE_MODEL,
-        prompt=prompt,
-        max_tokens=150
-    )
-    print(f'Instruct FULL response: {response}')
-    update_model_input_usage(usage_data, response.usage.prompt_tokens)
-    update_model_output_usage(usage_data, response.usage.completion_tokens)
+    if model_provider == 'openai':
+        creator = openai.create_embedding
+    elif model_provider == 'google':
+        creator = google.create_embedding
+    else:
+        raise ApplicationException(f'Unknown model provider: {model_provider}')
+    
+    response = creator(data)
+    update_embedding_usage(request_data.usage_data, response['usage'])
+    return response['embedding']
 
-    print(f'Instruct response: {response.choices[0].text.strip()}')
-    return response.choices[0].text.strip()
+def get_instruct_response(prompt, request_data):
+    model_provider = request_data.model.split(' | ')[0]
+
+    if model_provider == 'openai':
+        creator = openai.get_instruct_response
+    elif model_provider == 'google':
+        creator = google.get_instruct_response
+    else:
+        raise ApplicationException(f'Unknown model provider: {model_provider}')
+    
+    response = creator(prompt)
+    update_model_input_usage(request_data.usage_data, response['usage']['input'])
+    update_model_output_usage(request_data.usage_data, response['usage']['output'])
+    return response['response']

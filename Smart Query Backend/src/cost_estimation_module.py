@@ -1,62 +1,69 @@
-model_input_tokens_generated = 0
-model_output_tokens_generated = 0
-embedding_tokens_generated = 0
+from model_providers import openai
+from model_providers import google
+from custom_exceptions import ApplicationException
 
 ### exports
 
 def update_embedding_usage(usage_data, usage):
-    global embedding_tokens_generated
     if usage:
-        embedding_tokens_generated += usage
         usage_data['embedding'] += usage
 
 def update_model_input_usage(usage_data, usage):
-    global model_input_tokens_generated
     if usage:
-        model_input_tokens_generated += usage
         usage_data['model_input'] += usage
 
 def update_model_output_usage(usage_data, usage):
-    global model_output_tokens_generated
     if usage:
-        model_output_tokens_generated += usage
         usage_data['model_output'] += usage
 
 ###
 
 
-usd_to_inr = 83.5
-embedding_tokens_per_dollar = 0.02/10**6
-model_input_tokens_per_dollar = 3/10**6
-model_output_tokens_per_dollar = 6/10**6
+def convert_embedding_usage_to_cost(model, usage):
+    model_provider = model.split(' | ')[0]
 
-embedding_tokens_per_rupee = embedding_tokens_per_dollar * usd_to_inr
-model_input_tokens_per_rupee = model_input_tokens_per_dollar * usd_to_inr
-model_output_tokens_per_rupee = model_output_tokens_per_dollar * usd_to_inr
+    if model_provider == 'openai':
+        rupees_per_embedding_token = openai.rupees_per_embedding_token
+    elif model_provider == 'google':
+        rupees_per_embedding_token = google.rupees_per_embedding_token
+    else:
+        raise ApplicationException(f'Unknown model provider: {model_provider}')
 
-def convert_embedding_usage_to_cost(usage):
-    return usage * embedding_tokens_per_rupee
+    return usage * rupees_per_embedding_token
 
-def convert_model_input_usage_to_cost(usage):
-    return usage * model_input_tokens_per_rupee
+def convert_model_input_usage_to_cost(model, usage):
+    model_provider = model.split(' | ')[0]
 
-def convert_model_output_usage_to_cost(usage):
-    return usage * model_output_tokens_per_rupee
+    if model_provider == 'openai':
+        rupees_per_model_input_token = openai.rupees_per_model_input_token
+    elif model_provider == 'google':
+        rupees_per_model_input_token = google.rupees_per_model_input_token
+    else:
+        raise ApplicationException(f'Unknown model provider: {model_provider}')
 
-def convert_model_usage_to_cost(model_input_usage, model_output_usage):
-    return convert_model_input_usage_to_cost(model_input_usage) + convert_model_output_usage_to_cost(model_output_usage)
+    return usage * rupees_per_model_input_token
+
+def convert_model_output_usage_to_cost(model, usage):
+    model_provider = model.split(' | ')[0]
+
+    if model_provider == 'openai':
+        rupees_per_model_output_token = openai.rupees_per_model_output_token
+    elif model_provider == 'google':
+        rupees_per_model_output_token = google.rupees_per_model_output_token
+    else:
+        raise ApplicationException(f'Unknown model provider: {model_provider}')
+
+    return usage * rupees_per_model_output_token
+
+def convert_model_usage_to_cost(model, model_input_usage, model_output_usage):
+    return convert_model_input_usage_to_cost(model, model_input_usage) + convert_model_output_usage_to_cost(model, model_output_usage)
 
 
 ### exports
 
-def get_usage_checkpoint():
-    return {
-        'embedding': embedding_tokens_generated,
-        'model_input': model_input_tokens_generated,
-        'model_output': model_output_tokens_generated
-    }
+def calculate_cost(request_data, checkpoint_before):
 
-def calculate_cost(checkpoint_before, checkpoint_after):
+    checkpoint_after = request_data.usage_data
 
     embedding_tokens_generated = checkpoint_after['embedding'] - checkpoint_before['embedding']
     model_input_tokens_generated = checkpoint_after['model_input'] - checkpoint_before['model_input']
@@ -65,8 +72,8 @@ def calculate_cost(checkpoint_before, checkpoint_after):
     def format_cost(cost):
         return f"Rs. {cost:.5f}"
 
-    embedding_cost = convert_embedding_usage_to_cost(embedding_tokens_generated)
-    model_cost = convert_model_usage_to_cost(model_input_tokens_generated, model_output_tokens_generated)
+    embedding_cost = convert_embedding_usage_to_cost(request_data.embedding_model, embedding_tokens_generated)
+    model_cost = convert_model_usage_to_cost(request_data.model, model_input_tokens_generated, model_output_tokens_generated)
     
     return {
         'embedding_cost': format_cost(embedding_cost),

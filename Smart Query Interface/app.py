@@ -21,7 +21,7 @@ databases = {
     "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
     "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"]
 }
-available_models = ["gpt-3.5-turbo", "gemini-1.5-flash"]
+available_models = ["openai | gpt-3.5-turbo", "google | gemini-1.5-flash"]
 
 @app.route('/')
 def index():
