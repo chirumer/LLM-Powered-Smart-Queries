@@ -18,3 +18,9 @@ curl -X POST -H "Content-Type: application/json" -d '{
 
 ### cost for updating embeddings of ironbank + grimlock + jetfire:
 {'embedding_cost': 'Rs. 0.05485', 'model_cost': 'Rs. 0.00000'}
+
+
+## TO DO
+* integrate gemini
+* allow editing session title and deleting sessions in the ui
+* make cost estimation request specific instead of global
