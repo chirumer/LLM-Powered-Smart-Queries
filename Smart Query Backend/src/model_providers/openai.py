@@ -1,6 +1,8 @@
 from openai import OpenAI
+import os
 
-client = OpenAI()
+API_KEY = os.getenv('OPENAI_API_KEY')
+client = OpenAI(api_key=API_KEY)
 EMBEDDING_MODEL = "text-embedding-3-small"
 LANGUAGE_MODEL = "gpt-3.5-turbo-instruct"
 
