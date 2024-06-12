@@ -1,11 +1,11 @@
 from sql_query_generation import smart_query
 from custom_exceptions import QueryGenerationFail
 
-def assistant_reply(db_conn, database, query):
+def assistant_reply(request_data):
     # to do: handle conversations
 
     try:
-        response = smart_query(db_conn, database, query)
+        response = smart_query(request_data)
         return response
     except QueryGenerationFail as e:
         response = {

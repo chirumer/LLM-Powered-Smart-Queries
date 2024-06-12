@@ -18,37 +18,37 @@ def format_schema(schema):
     
     return schema_string
 
-def text_to_sql_prompt(db_conn, database, query):
-    relevant_tables = select_relevant_tables(db_conn, database, query)
+def text_to_sql_prompt(request_data):
+    relevant_tables = select_relevant_tables(request_data)
 
     prompt = 'Here are the available table schema:\n'
     for table in relevant_tables:
-        schema = db_conn.describe_table(*table.split('.'))
+        schema = request_data.db_conn.describe_table(*table.split('.'))
         prompt += f'{table}:\n'
         prompt += format_schema(schema)
     prompt += '\n'
 
-    prompt += f"Please write the SQL query to solve the following query. Give me JUST the executable query and nothing else, no extra characters either:\n{query}\n"
+    prompt += f"Please write the SQL query to solve the following query. Give me JUST the executable query and nothing else, no extra characters either:\n{request_data.query}\n"
     return prompt
 
-def text_to_sql(db_conn, database, query):
-    prompt = text_to_sql_prompt(db_conn, database, query)
-    sql_query = get_instruct_response(prompt)
+def text_to_sql(request_data):
+    prompt = text_to_sql_prompt(request_data)
+    sql_query = get_instruct_response(prompt, request_data.usage_data)
     return sql_query
 
-def smart_query(db_conn, database, query):
+def smart_query(request_data):
 
     failed_queries = []
     tries = 0
     while tries < CONSTANTS.MAX_QUERY_REGENERATION:
 
-        sql_query =  text_to_sql(db_conn, database, query)
+        sql_query =  text_to_sql(request_data)
         print('generated SQL query:', sql_query)
         if not is_generated_safe_query(sql_query):
             raise ApplicationException(f"generated unsafe query {sql_query}")
         
         try:
-            result = db_conn.run_query(sql_query)
+            result = request_data.db_conn.run_query(sql_query)
 
         except Exception as e:
             failed_queries.append(sql_query)
