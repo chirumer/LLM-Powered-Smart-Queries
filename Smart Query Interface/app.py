@@ -21,6 +21,7 @@ databases = {
     "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
     "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"]
 }
+available_models = ["gpt-3.5-turbo", "gemini-1.5-flash"]
 
 @app.route('/')
 def index():
@@ -32,17 +33,20 @@ def create_session():
         data = request.json
         Environment = data.get('Environment', None)
         DatabaseName = data.get('DatabaseName', None)
+        Model = data.get('Model', None)
         
         with connection.cursor() as cursor:
-            sql = "INSERT INTO sessions (conversation, Environment, DatabaseName, session_title) VALUES (%s, %s, %s, 'New Chat..')"
-            cursor.execute(sql, ('[]', Environment, DatabaseName))
+            sql = "INSERT INTO sessions (conversation, Environment, DatabaseName, session_title, model_name) VALUES (%s, %s, %s, 'New Chat..', %s)"
+            cursor.execute(sql, ('[]', Environment, DatabaseName, Model))
             connection.commit()
             sessionId = cursor.lastrowid
             session = {
                 "sessionId": str(sessionId),
                 "conversation": [],
                 "Environment": Environment,
-                "DatabaseName": DatabaseName
+                "DatabaseName": DatabaseName,
+                "session_title": "New Chat..",
+                "model_name": Model
             }
             return jsonify(session), 201
     except Exception as e:
@@ -112,10 +116,12 @@ def add_question(sessionId):
                 cursor.execute(sql, (question, sessionId))
 
             answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
+            metadata = f"SQL Query: {sql_query} | Embedding Cost: {embedding_cost} | Model Cost: {model_cost}"
+            
             answer_object = {
                 "role": "assistant",
                 "content": answer,
-                "metadata":sql_query
+                "metadata":metadata
             }
             # Update conversation in the database with answer
             updated_conversation.append(answer_object)
@@ -123,7 +129,7 @@ def add_question(sessionId):
             cursor.execute(sql, (json.dumps(updated_conversation), sessionId))
             connection.commit()
 
-            metadata = f"SQL Query: {sql_query} | Embedding Cost: {embedding_cost} | Model Cost: {model_cost}"
+            
 
             return jsonify({ "answer": answer,"metadata": metadata }), 201
         
@@ -133,6 +139,10 @@ def add_question(sessionId):
 @app.route('/api/environments', methods=['GET'])
 def get_environments():
     return jsonify(environments=environments)
+
+@app.route('/api/available_models', methods=['GET'])
+def get_available_models():
+    return jsonify(available_models=available_models)
 
 @app.route('/api/databases/<environment>', methods=['GET'])
 def get_databases(environment):
