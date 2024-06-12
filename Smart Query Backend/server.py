@@ -11,6 +11,7 @@ from cost_estimation_module import get_usage_checkpoint, calculate_cost
 from validation import validate_query
 from custom_exceptions import ApplicationException
 from formatting import format_query_result
+from request_specific_data import Request_data
 
 from flask import Flask, request, jsonify
 
@@ -26,6 +27,7 @@ def handle_query():
         query = data.get('query')
         environment = data.get('environment')
         database = data.get('database')
+        model = data.get('model')
     except:
         return jsonify({"error": "invalid input"}), 400
 
@@ -34,23 +36,15 @@ def handle_query():
         return jsonify({ "error": validation_result['reason']}), 400
 
     try:
-        initial_checkpoint = get_usage_checkpoint()
         db_credentials = get_database_credentials_for_environment(environment)
         db_conn = DatabaseConnection(db_credentials)
-        response = assistant_reply(db_conn, database, query)
 
-        # temporary dummy response
-        # response = {
-        #     'result': [{'dummy result': 'dummy value'}],
-        #     'sql_query': 'SELECT * FROM table WHERE column = value',
-        #     'cost': {
-        #         'embedding_cost': 0,
-        #         'model_cost': 0
-        #     }
-        # }
+        request_data = Request_data(db_conn, database, query, model)
+        initial_checkpoint = request_data.get_usage_data()
+        response = assistant_reply(request_data)
 
         response['result'] = format_query_result(response['result'])
-        response['cost'] = calculate_cost(initial_checkpoint, get_usage_checkpoint())
+        response['cost'] = calculate_cost(initial_checkpoint, request_data.get_usage_data())
         db_conn.close()
 
     except ApplicationException as e:

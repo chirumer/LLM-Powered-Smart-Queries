@@ -4,20 +4,23 @@ embedding_tokens_generated = 0
 
 ### exports
 
-def update_embedding_usage(usage):
+def update_embedding_usage(usage_data, usage):
     global embedding_tokens_generated
     if usage:
         embedding_tokens_generated += usage
+        usage_data['embedding'] += usage
 
-def update_model_input_usage(usage):
+def update_model_input_usage(usage_data, usage):
     global model_input_tokens_generated
     if usage:
         model_input_tokens_generated += usage
+        usage_data['model_input'] += usage
 
-def update_model_output_usage(usage):
+def update_model_output_usage(usage_data, usage):
     global model_output_tokens_generated
     if usage:
         model_output_tokens_generated += usage
+        usage_data['model_output'] += usage
 
 ###
 
@@ -47,15 +50,17 @@ def convert_model_usage_to_cost(model_input_usage, model_output_usage):
 ### exports
 
 def get_usage_checkpoint():
-    return (embedding_tokens_generated, model_input_tokens_generated, model_output_tokens_generated)
+    return {
+        'embedding': embedding_tokens_generated,
+        'model_input': model_input_tokens_generated,
+        'model_output': model_output_tokens_generated
+    }
 
 def calculate_cost(checkpoint_before, checkpoint_after):
-    embedding_tokens_generated_before, model_input_tokens_generated_before, model_output_tokens_generated_before = checkpoint_before
-    embedding_tokens_generated_after, model_input_tokens_generated_after, model_output_tokens_generated_after = checkpoint_after
 
-    embedding_tokens_generated = embedding_tokens_generated_after - embedding_tokens_generated_before
-    model_input_tokens_generated = model_input_tokens_generated_after - model_input_tokens_generated_before
-    model_output_tokens_generated = model_output_tokens_generated_after - model_output_tokens_generated_before
+    embedding_tokens_generated = checkpoint_after['embedding'] - checkpoint_before['embedding']
+    model_input_tokens_generated = checkpoint_after['model_input'] - checkpoint_before['model_input']
+    model_output_tokens_generated = checkpoint_after['model_output'] - checkpoint_before['model_output']
 
     def format_cost(cost):
         return f"Rs. {cost:.5f}"

@@ -6,11 +6,11 @@ from custom_exceptions import ApplicationException, QueryGenerationFail
 from configuration import CONSTANTS
 from validation import get_validated_relevant_tables
 
-def get_top_N_related_tables(database, query, N=8):
-    query_embed = create_embedding(query)
+def get_top_N_related_tables(request_data, N=8):
+    query_embed = create_embedding(request_data.query, request_data.usage_data)
     relatedness_fn = lambda x, y: 1 - spatial.distance.cosine(x, y)
 
-    embeds = get_embeddings(database)
+    embeds = get_embeddings(request_data.database)
 
     score_dict = {}
     for table, embedding in embeds.items():
@@ -36,9 +36,9 @@ def generate_selection_prompt(db_conn, candidates, query):
     prompt += f"Relevant Tables: "
     return prompt
 
-def select_relevant_tables(db_conn, database, query):
-    candidates = get_top_N_related_tables(database, query)
-    prompt = generate_selection_prompt(db_conn, candidates, query)
+def select_relevant_tables(request_data):
+    candidates = get_top_N_related_tables(request_data)
+    prompt = generate_selection_prompt(request_data.db_conn, candidates, request_data.query)
 
     # go ahead with generation only if confidence threshold is met
     max_confidence = 0
@@ -52,7 +52,7 @@ def select_relevant_tables(db_conn, database, query):
     invalid_output_count = 0
     while invalid_output_count < CONSTANTS.MAX_RELEVANT_TABLE_REGENERATION:
         try:
-            result = get_instruct_response(prompt)
+            result = get_instruct_response(prompt, request_data.usage_data)
             validated_result = get_validated_relevant_tables(result, candidates)
             return validated_result
 

@@ -115,7 +115,7 @@ def add_question(sessionId):
                 sql = "UPDATE sessions SET session_title = %s WHERE sessionId = %s"
                 cursor.execute(sql, (question, sessionId))
 
-            answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'])
+            answer, sql_query, embedding_cost, model_cost = get_model_reply(updated_conversation, session['databaseName'], session['model_name'])
             metadata = f"SQL Query: {sql_query} | Embedding Cost: {embedding_cost} | Model Cost: {model_cost}"
             
             answer_object = {
@@ -151,13 +151,14 @@ def get_databases(environment):
     else:
         return jsonify(error='Environment not found'), 404
     
-def get_model_reply(conversation, database_name):
+def get_model_reply(conversation, database_name, model):
     query = conversation[-1]['content']
     url = "http://localhost:3000/query"
     data = {
         "query": query,
         "environment": "dev",
-        "database": database_name
+        "database": database_name,
+        "model": model
     }
     headers = {"Content-Type": "application/json"}
     
