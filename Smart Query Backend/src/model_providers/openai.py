@@ -28,3 +28,12 @@ def get_instruct_response(prompt):
             'output': response.usage.completion_tokens
         }
     }
+
+usd_to_inr = 83.5
+embedding_tokens_per_dollar = 0.02/10**6
+model_input_tokens_per_dollar = 3/10**6
+model_output_tokens_per_dollar = 6/10**6
+
+embedding_tokens_per_rupee = embedding_tokens_per_dollar * usd_to_inr
+model_input_tokens_per_rupee = model_input_tokens_per_dollar * usd_to_inr
+model_output_tokens_per_rupee = model_output_tokens_per_dollar * usd_to_inr

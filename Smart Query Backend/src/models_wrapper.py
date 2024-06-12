@@ -14,6 +14,8 @@ def create_embedding(data, request_data):
 
     if model_provider == 'openai':
         creator = openai.create_embedding
+    elif model_provider == 'google':
+        creator = google.create_embedding
     else:
         raise ApplicationException(f'Unknown model provider: {model_provider}')
     
