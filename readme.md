@@ -24,3 +24,4 @@ curl -X POST -H "Content-Type: application/json" -d '{
 * integrate gemini
 * allow editing session title and deleting sessions in the ui
 * make cost estimation request specific instead of global
+* timeout long running queries
