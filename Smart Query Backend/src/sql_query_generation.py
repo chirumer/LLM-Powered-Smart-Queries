@@ -45,7 +45,7 @@ def smart_query(request_data):
         sql_query =  text_to_sql(request_data)
         print('generated SQL query:', sql_query)
         if not is_generated_safe_query(sql_query):
-            raise ApplicationException(f"generated unsafe query {sql_query}")
+            raise ApplicationException(f"This kind of operation is not supported by the system.")
         
         try:
             result = request_data.db_conn.run_query(sql_query)
