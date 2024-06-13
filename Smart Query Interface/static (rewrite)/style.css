@@ -445,6 +445,7 @@ p.secondary {
 
 #message-form {
     margin: 0 auto;
+    margin-top: 17px;
     width: 100%;
     box-sizing: border-box;
     max-width: 850px;
