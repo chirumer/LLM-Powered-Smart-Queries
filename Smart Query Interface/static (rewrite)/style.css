@@ -411,10 +411,12 @@ p.secondary {
 .view.conversation-view {
     display: none;
     height: calc( 100% - 100px );
+    flex-direction: column;
 }
 
 .chat {
     overflow-y: auto;
+    flex-grow: 1;
 }
 
 .model-name {
@@ -424,6 +426,7 @@ p.secondary {
     padding: 23px;
     border-bottom: 1px solid var(--color-border2);
     font-size: 0.85em;
+    flex-grow: 0;
 }
 
 .message {
