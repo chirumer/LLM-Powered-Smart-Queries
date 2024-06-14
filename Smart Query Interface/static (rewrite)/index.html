@@ -126,36 +126,48 @@
     <main>
         <div class="view new-chat-view">
             <div class="model-selector">
-                <button class="gpt-3 selected">
-                    <i class="fa fa-bolt"></i> GPT-3.5
+                <button class="selected">
+                    <i class="fa fa-code"></i> Environment
                     <div class="model-info">
                         <div class="model-info-box">
-                            <p>Our fastest model, great for most every day tasks.</p>
+                            <p> Choose which environment to run the queries </p>
 
-                            <p class="secondary">Available to Free and Plus users</p>
+                            <p class="secondary">Note: the environment will remain fixed the the remainder of the chat</p>
                         </div>
                     </div>
                 </button>
-                <button class="gpt-4">
-                    <i class="fa fa-wand-magic-sparkles"></i> GPT-4
+                <button class="selected">
+                    <i class="fa fa-database"></i> Database
                     <div class="model-info">
                         <div class="model-info-box">
-                            <p>Our most capable model, great for creative stuff.</p>
+                            <p> Choose which database to run the queries </p>
 
-                            <p class="secondary">Available for Plus users.</p>
+                            <p class="secondary">Note: the database will remain fixed the the remainder of the chat</p>
+                        </div>
+                    </div>
+                </button>
+                <button class="selected">
+                    <i class="fa fa-database"></i> Model
+                    <div class="model-info">
+                        <div class="model-info-box">
+                            <p> Choose which model to run the queries </p>
+
+                            <p class="secondary">Note: the model will remain fixed the the remainder of the chat</p>
                         </div>
                     </div>
                 </button>
             </div>
 
             <div class="logo">
-                ChatWTF
+                HyperQuery
             </div>
         </div>
 
         <div class="view conversation-view">
             <div class="model-name">
-                <i class="fa fa-bolt"></i> Default (GPT-3.5)
+                <i class="fa fa-code"></i> UAT
+                <i class="fa fa-database" style="margin-left: 15px;"></i> hyperface_dev_db
+                <i class="fa fa-robot" style="margin-left: 15px;"></i> gpt-3.5-turbo
             </div>
             <div class="chat">
                 <div class="user message">
