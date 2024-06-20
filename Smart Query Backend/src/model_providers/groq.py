@@ -11,6 +11,10 @@ def get_instruct_response(model_selected, prompt):
     response = client.chat.completions.create(
         messages=[
             {
+                "role": "system",
+                "content": "You are an instruction following AI model which does exactly as told and only that.",
+            },
+            {
                 "role": "user",
                 "content": prompt,
             }
