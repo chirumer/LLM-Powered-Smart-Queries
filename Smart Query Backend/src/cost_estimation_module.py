@@ -1,5 +1,6 @@
 from model_providers import openai
 from model_providers import google
+from model_providers import groq
 from custom_exceptions import ApplicationException
 
 ### exports
@@ -20,36 +21,37 @@ def update_model_output_usage(usage_data, usage):
 
 
 def convert_embedding_usage_to_cost(model, usage):
-    model_provider = model.split(' | ')[0]
 
-    if model_provider == 'openai':
-        rupees_per_embedding_token = openai.rupees_per_embedding_token
-    elif model_provider == 'google':
-        rupees_per_embedding_token = google.rupees_per_embedding_token
-    else:
-        raise ApplicationException(f'Unknown model provider: {model_provider}')
+    # currently only openai embeddings are supported
+    rupees_per_embedding_token = openai.rupees_per_embedding_token
 
     return usage * rupees_per_embedding_token
 
-def convert_model_input_usage_to_cost(model, usage):
-    model_provider = model.split(' | ')[0]
+def convert_model_input_usage_to_cost(model_tag, usage):
+    model_provider = model_tag.split(' | ')[0]
+    model = model_tag.split(' | ')[1]
 
     if model_provider == 'openai':
-        rupees_per_model_input_token = openai.rupees_per_model_input_token
+        rupees_per_model_input_token = openai.get_rupees_per_model_input_token(model)
     elif model_provider == 'google':
-        rupees_per_model_input_token = google.rupees_per_model_input_token
+        rupees_per_model_input_token = google.get_rupees_per_model_input_token(model)
+    elif model_provider == 'groq':
+        rupees_per_model_input_token = groq.get_rupees_per_model_input_token(model)
     else:
         raise ApplicationException(f'Unknown model provider: {model_provider}')
 
     return usage * rupees_per_model_input_token
 
-def convert_model_output_usage_to_cost(model, usage):
-    model_provider = model.split(' | ')[0]
+def convert_model_output_usage_to_cost(model_tag, usage):
+    model_provider = model_tag.split(' | ')[0]
+    model = model_tag.split(' | ')[1]
 
     if model_provider == 'openai':
-        rupees_per_model_output_token = openai.rupees_per_model_output_token
+        rupees_per_model_output_token = openai.get_rupees_per_model_output_token(model)
     elif model_provider == 'google':
-        rupees_per_model_output_token = google.rupees_per_model_output_token
+        rupees_per_model_output_token = google.get_rupees_per_model_output_token(model)
+    elif model_provider == 'groq':
+        rupees_per_model_output_token = groq.get_rupees_per_model_output_token(model)
     else:
         raise ApplicationException(f'Unknown model provider: {model_provider}')
 

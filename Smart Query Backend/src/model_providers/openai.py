@@ -15,7 +15,7 @@ def create_embedding(data):
         'usage': response.usage.total_tokens
     }
 
-def get_instruct_response(prompt):
+def get_instruct_response(model_selected, prompt):
     response = client.completions.create(
         model=LANGUAGE_MODEL,
         prompt=prompt,
@@ -39,3 +39,9 @@ dollar_per_model_output_token = 2/10**6
 rupees_per_embedding_token = dollar_per_embedding_token * usd_to_inr
 rupees_per_model_input_token = dollar_per_model_input_token * usd_to_inr
 rupees_per_model_output_token = dollar_per_model_output_token * usd_to_inr
+
+def get_rupees_per_model_input_token(model):
+    return rupees_per_model_input_token
+
+def get_rupees_per_model_output_token(model):
+    return rupees_per_model_output_token

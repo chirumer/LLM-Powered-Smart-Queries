@@ -2,6 +2,7 @@ from openai import OpenAI
 from cost_estimation_module import update_embedding_usage, update_model_input_usage, update_model_output_usage
 from model_providers import openai
 from model_providers import google
+from model_providers import groq
 from custom_exceptions import ApplicationException
 
 client = OpenAI()
@@ -25,15 +26,18 @@ def create_embedding(data, request_data):
 
 def get_instruct_response(prompt, request_data):
     model_provider = request_data.model.split(' | ')[0]
+    model = request_data.model.split(' | ')[1]
 
     if model_provider == 'openai':
         creator = openai.get_instruct_response
     elif model_provider == 'google':
         creator = google.get_instruct_response
+    elif model_provider == 'groq':
+        creator = groq.get_instruct_response
     else:
         raise ApplicationException(f'Unknown model provider: {model_provider}')
     
-    response = creator(prompt)
+    response = creator(model, prompt)
     update_model_input_usage(request_data.usage_data, response['usage']['input'])
     update_model_output_usage(request_data.usage_data, response['usage']['output'])
     return response['response']

@@ -28,7 +28,7 @@ def text_to_sql_prompt(request_data):
         prompt += format_schema(schema)
     prompt += '\n'
 
-    prompt += f"Please write the SQL query to solve the following query. Give me JUST the executable query and nothing else, NO extra characters and NO formatting:\n{request_data.query}\n"
+    prompt += f"Query:{request_data.query}\nFor the above query, please write the SQL query to solve the following query. Give me JUST the executable query and nothing else, NO extra characters and NO formatting:\n"
     return prompt
 
 def text_to_sql(request_data):

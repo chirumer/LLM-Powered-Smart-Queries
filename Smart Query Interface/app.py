@@ -21,7 +21,14 @@ databases = {
     "Hyperface User Acceptance Testing Environment": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"],
     "Prod": ["all", "hyperface_dev_db", "grimlock_dev_db", "hyperface_platform_dev"]
 }
-available_models = ["openai | gpt-3.5-turbo", "google | gemini-1.5-flash"]
+available_models = [
+    "openai | gpt-3.5-turbo", 
+    "google | gemini-1.5-flash",
+    "groq | llama3-70b-8192", 
+    "groq | llama3-8b-8192",
+    "groq | gemma-7b-it",
+    "groq | mixtral-8x7b-32768"
+]
 
 @app.route('/')
 def index():
