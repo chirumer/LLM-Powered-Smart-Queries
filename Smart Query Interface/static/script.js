@@ -56,15 +56,6 @@ show_user_menu.addEventListener("click", function() {
     }
 });
 
-
-for (const model of models) {
-    model.addEventListener("click", function() {
-        document.querySelector(".model-selector button.selected")?.classList.remove("selected");
-        model.classList.add("selected");
-    });
-}
-
-
 message_box.addEventListener("keyup", function() {
     message_box.style.height = "auto";
     let height = message_box.scrollHeight + 2;
@@ -119,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchEnvironment() {
     try {
-        const response = await fetch('http://127.0.0.1:5600/api/environments');
+        const response = await fetch('/api/environments');
         const data = await response.json();
         displayEnvironment(data.environments);
     } catch (error) {
@@ -129,7 +120,7 @@ async function fetchEnvironment() {
 
 async function fetchModels() {
     try {
-        const response = await fetch('http://127.0.0.1:5600/api/available_models');
+        const response = await fetch('/api/available_models');
         const data = await response.json();
         displayModels(data.available_models);
     } catch (error) {
@@ -139,7 +130,7 @@ async function fetchModels() {
 
 async function fetchDatabases(environment) {
     try {
-        const response = await fetch(`http://127.0.0.1:5600/api/databases/${environment}`);
+        const response = await fetch(`/api/databases/${environment}`);
         const data = await response.json();
         return data;
     } catch (error) {
