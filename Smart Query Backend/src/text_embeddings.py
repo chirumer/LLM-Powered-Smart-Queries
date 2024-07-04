@@ -27,6 +27,7 @@ def update_embeddings(db_conn):
         for table in filter_tables(db, db_conn.get_tables(db)):
             text_description = f"The table {table} has the following columns: "
             schema = db_conn.describe_table(db, table)
+            relationships = db_conn.get_table_relationships(db, table)
             for row in schema:
                 row_description = f"{row[0]} of type {row[1]}"
                 if row[2] == 'YES':
@@ -41,6 +42,12 @@ def update_embeddings(db_conn):
                     row_description += f" and has the extra attribute {row[5]}"
                 
                 text_description += "\n" + row_description
+
+            if relationships and relationships['relationships']:
+                text_description += "\n\nThe table also has the following relationships:"
+                for rel in relationships['relationships']:
+                    rel_description = f"\n- Foreign key {rel['constraint_name']} on column {rel['column']} references {rel['referenced_table']}({rel['referenced_column']})"
+                    text_description += rel_description
 
             key = '.'.join([db, table])
             if key in last_updated_schema:
