@@ -10,6 +10,17 @@ def get_instruct_response(model_selected, prompt):
     print('using gemini')
     response = model.generate_content(prompt)
 
+    # temporary fix
+    if (response.text.startswith('```') and response.text.endswith('```')):
+        output = response.text[len(response.text.split()[0]):-len(response.text.split()[-1])]
+        return {
+            'response': response.text,
+            'usage': {
+                'input': response.usage_metadata.prompt_token_count,
+                'output': output,
+            }
+        }
+
     return {
         'response': response.text,
         'usage': {
