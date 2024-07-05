@@ -6,7 +6,7 @@ from custom_exceptions import ApplicationException, QueryGenerationFail
 from configuration import CONSTANTS
 from validation import get_validated_relevant_tables
 
-def get_top_N_related_tables(request_data, N=8):
+def get_top_N_related_tables(request_data, N=20):
     query_embed = create_embedding(request_data.query, request_data)
     relatedness_fn = lambda x, y: 1 - spatial.distance.cosine(x, y)
 
@@ -17,6 +17,7 @@ def get_top_N_related_tables(request_data, N=8):
         score_dict[table] = relatedness_fn(query_embed, embedding)
 
     sorted_score_dict = dict(sorted(score_dict.items(), key=lambda item: item[1], reverse=True)[:N])
+
     return sorted_score_dict
 
 def generate_selection_prompt(db_conn, candidates, query):
@@ -25,7 +26,20 @@ def generate_selection_prompt(db_conn, candidates, query):
     for table in candidates:
         schema = db_conn.describe_table(*table.split('.'))
         fields = [column[0] for column in schema]
-        prompt += f'{table}: {", ".join(fields)}\n'
+
+        # Retrieve relationships
+        relationships = db_conn.get_table_relationships(*table.split('.'))
+
+        # Create relationships string
+        relationships_str = ""
+        if relationships and 'relationships' in relationships:
+            relationships_str = " | Relationships: " + ", ".join(
+                [f"{rel['constraint_name']}({rel['column']}) -> {rel['referenced_table']}({rel['referenced_column']})"
+                for rel in relationships['relationships']]
+            )
+
+        # Append table fields and relationships to the prompt
+        prompt += f'{table}: {", ".join(fields)}{relationships_str}\n'
 
     prompt += "Please find which tables are relevant to solve queries. You must answer ONLY a valid json array and NOTHING ELSE.\n\n"
     prompt += f"Query: In the {table.split('.')[1]} table of {table.split('.')[0]} database, is the {schema[0][0]} column a primary key?\n"
@@ -38,7 +52,9 @@ def generate_selection_prompt(db_conn, candidates, query):
 
 def select_relevant_tables(request_data):
     candidates = get_top_N_related_tables(request_data)
+    print(f'candidates: {candidates}')
     prompt = generate_selection_prompt(request_data.db_conn, candidates, request_data.query)
+    print(f'prompt: {prompt}')
 
     # go ahead with generation only if confidence threshold is met
     max_confidence = 0
