@@ -180,10 +180,19 @@ function displayHistory(data) {
     conversationsElement.innerHTML = null;
     for (let i = data.length - 1; i >= 0; i--) {
         const li = document.createElement('li');
-        // Create the button element with the conversation title
+        li.setAttribute('data-session-id', data[i].sessionId);
+        
         const button = document.createElement('button');
         button.classList.add('conversation-button');
-        button.innerHTML = '<i class="fa fa-message fa-regular"></i> ' + data[i].session_title;
+        
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'conversation-title';
+        titleSpan.textContent = data[i].session_title;
+        titleSpan.setAttribute('data-original-title', data[i].session_title);
+        
+        button.innerHTML = '<i class="fa fa-message fa-regular"></i> ';
+        button.appendChild(titleSpan);
+        
         button.addEventListener("click", function () {
             show_view(".conversation-view");
             newSession = false;
@@ -197,16 +206,30 @@ function displayHistory(data) {
             getSession()
             prevSession=true;
         })
+        
         const fadeDiv = document.createElement('div');
         fadeDiv.classList.add('fade');
+        
         const editButtonsDiv = document.createElement('div');
         editButtonsDiv.classList.add('edit-buttons');
+        
         const editButton = document.createElement('button');
         editButton.innerHTML = '<i class="fa fa-edit"></i>';
+        editButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            editConversation(data[i].sessionId, titleSpan);
+        });
+        
         const deleteButton = document.createElement('button');
         deleteButton.innerHTML = '<i class="fa fa-trash"></i>';
+        deleteButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            deleteConversation(data[i].sessionId);
+        });
+        
         editButtonsDiv.appendChild(editButton);
         editButtonsDiv.appendChild(deleteButton);
+        
         li.appendChild(button);
         li.appendChild(fadeDiv);
         li.appendChild(editButtonsDiv);
@@ -448,4 +471,82 @@ function appendAnswer(answer, metadata) {
 
     chatContainer.appendChild(assistantMessageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function editConversation(sessionId, titleElement) {
+    const currentTitle = titleElement.textContent;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentTitle;
+    input.className = 'edit-title-input';
+
+    titleElement.textContent = '';
+    titleElement.appendChild(input);
+    input.focus();
+
+    input.addEventListener('blur', function() {
+        updateConversationTitle(sessionId, input.value, titleElement);
+    });
+
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            updateConversationTitle(sessionId, input.value, titleElement);
+        }
+    });
+}
+
+function updateConversationTitle(sessionId, newTitle, titleElement) {
+    fetch(`${url}/${sessionId}/title`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: newTitle }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            titleElement.textContent = newTitle;
+            // Update the conversation button text
+            const conversationButton = titleElement.closest('.conversation-button');
+            if (conversationButton) {
+                const icon = conversationButton.querySelector('i.fa-message');
+                conversationButton.innerHTML = '';
+                conversationButton.appendChild(icon);
+                conversationButton.appendChild(document.createTextNode(' ' + newTitle));
+            }
+            // If this is the active conversation, update the title in the conversation view
+            const listItem = titleElement.closest('li');
+            if (listItem && listItem.classList.contains('active')) {
+                const databaseTitle = document.getElementById('database-title');
+                if (databaseTitle) {
+                    const titleParts = databaseTitle.innerHTML.split('</i>');
+                    databaseTitle.innerHTML = titleParts[0] + '</i> ' + newTitle + titleParts.slice(2).join('</i>');
+                }
+            }
+        } else {
+            titleElement.textContent = titleElement.getAttribute('data-original-title');
+            console.error('Failed to update title');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        titleElement.textContent = titleElement.getAttribute('data-original-title');
+    });
+}
+
+function deleteConversation(sessionId) {
+    if (confirm("Are you sure you want to delete this conversation?")) {
+        fetch(`${url}/${sessionId}`, {
+            method: 'DELETE',
+        })
+        .then(response => {
+            if (response.ok) {
+                document.querySelector(`[data-session-id="${sessionId}"]`).remove();
+            } else {
+                console.error('Failed to delete conversation');
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
 }
