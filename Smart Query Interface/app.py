@@ -158,6 +158,40 @@ def get_databases(environment):
     else:
         return jsonify(error='Environment not found'), 404
     
+@app.route('/api/sessions/<string:sessionId>', methods=['DELETE'])
+def delete_session(sessionId):
+    try:
+        with connection.cursor() as cursor:
+            sql = "DELETE FROM sessions WHERE sessionId = %s"
+            cursor.execute(sql, (sessionId,))
+            connection.commit()
+            if cursor.rowcount == 0:
+                return jsonify({"error": "Session not found"}), 404
+            return jsonify({"message": "Session deleted successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/sessions/<string:sessionId>/title', methods=['PATCH'])
+def update_session_title(sessionId):
+    try:
+        data = request.json
+        new_title = data.get('title')
+        
+        if not new_title:
+            return jsonify({"error": "New title is required"}), 400
+        
+        with connection.cursor() as cursor:
+            sql = "UPDATE sessions SET session_title = %s WHERE sessionId = %s"
+            cursor.execute(sql, (new_title, sessionId))
+            connection.commit()
+            
+            if cursor.rowcount == 0:
+                return jsonify({"error": "Session not found"}), 404
+            
+            return jsonify({"success": True, "message": "Title updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 def get_model_reply(conversation, database_name, model):
     query = conversation[-1]['content']
     url = "http://localhost:3000/query"
