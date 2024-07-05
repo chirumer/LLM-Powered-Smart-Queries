@@ -3,20 +3,7 @@ from models_wrapper import get_instruct_response
 from configuration import CONSTANTS, get_database_credentials_for_environment 
 from custom_exceptions import ApplicationException
 from validation import is_generated_safe_query
-
-def format_schema(schema):
-    headings = ["Field", "Type", "Null", "Key", "Default", "Extra"]
-
-    schema_string = ''
-    head_str = " | ".join(headings) + "\n"
-    head_len = len(head_str)
-    schema_string += "-" * head_len + "\n"
-    schema_string += head_str
-    schema_string += "-" * head_len + "\n"
-    schema_string += "\n".join([f"{column[0]} | {column[1]} | {column[2]} | {column[3]} | {column[4]} | {column[5]}" for column in schema])
-    schema_string += "\n" + "-" * head_len + "\n"
-    
-    return schema_string
+from formatting import format_schema
 
 def text_to_sql_prompt(request_data):
     relevant_tables = select_relevant_tables(request_data)
@@ -24,8 +11,9 @@ def text_to_sql_prompt(request_data):
     prompt = 'Here are the available table schema:\n'
     for table in relevant_tables:
         schema = request_data.db_conn.describe_table(*table.split('.'))
+        relationships = request_data.db_conn.get_table_relationships(*table.split('.'))
         prompt += f'{table}:\n'
-        prompt += format_schema(schema)
+        prompt += format_schema(schema, relationships)
     prompt += '\n'
 
     prompt += f"Query:{request_data.query}\nFor the above query, please write the SQL query to solve the following query. Give me JUST the executable query and nothing else, NO extra characters and NO formatting:\n"

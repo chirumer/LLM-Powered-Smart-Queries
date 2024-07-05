@@ -1,8 +1,5 @@
 import mysql.connector
-from mysql.connector import Error
-from dotenv import load_dotenv
-import os
-import json
+import re
 
 class DatabaseCredentials:
     def __init__(self, db_host, db_user, db_password):
@@ -51,6 +48,40 @@ class DatabaseConnection:
         schema = cursor.fetchall()
         cursor.close()
         return schema
+    
+    def show_create_table(self, db_name, table_name):
+        cursor = self.connection.cursor()
+        cursor.execute(f"USE {db_name}")
+        cursor.execute(f"SHOW CREATE TABLE {table_name}")
+        create_table = cursor.fetchall()
+        cursor.close()
+        return create_table[0][1]
+    
+    def extract_table_relationships(self, sql):
+        table_name_pattern = r'CREATE TABLE `(\w+)`'
+        foreign_key_pattern = r'CONSTRAINT `(\w+)` FOREIGN KEY \(`(\w+)`\) REFERENCES `(\w+)` \(`(\w+)`\)'
+
+        table_name = re.search(table_name_pattern, sql).group(1)
+        
+        relationships = []
+        for match in re.finditer(foreign_key_pattern, sql):
+            constraint_name, column, referenced_table, referenced_column = match.groups()
+            relationships.append({
+                'constraint_name': constraint_name,
+                'column': column,
+                'referenced_table': referenced_table,
+                'referenced_column': referenced_column
+            })
+
+        return {
+            'table': table_name,
+            'relationships': relationships
+        }
+    
+    def get_table_relationships(self, db_name, table_name):
+        create_table_sql = self.show_create_table(db_name, table_name)
+        relationships = self.extract_table_relationships(create_table_sql)
+        return relationships
     
     def run_query(self, query):
         cursor = self.connection.cursor()
