@@ -48,4 +48,7 @@ def get_instruct_response(prompt, request_data):
     response = creator(model, prompt)
     update_model_input_usage(request_data.usage_data, response['usage']['input'])
     update_model_output_usage(request_data.usage_data, response['usage']['output'])
+
+    print(f'response generated: {response["response"]}')
+
     return response['response']
