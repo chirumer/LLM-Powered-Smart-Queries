@@ -15,5 +15,7 @@ I have used [mistral-7b-instruct-v0.1.Q6_K.gguf](https://huggingface.co/TheBloke
 
 Step 3) In the build/bin is the llama-server binary
 I have used the command 
-```./build/bin/llama-server --color --model "../model/mistral-7b-instruct-v0.1.Q6_K.gguf" -t 7 -b 24 -n -1 --temp 0.3 -ngl 1```
+```
+./build/bin/llama-server --color --model "../model/mistral-7b-instruct-v0.1.Q6_K.gguf" -t 7 -b 24 -n -1 --temp 0.3 -ngl 1
+```
 For more information about options usable: https://github.com/ggerganov/llama.cpp
