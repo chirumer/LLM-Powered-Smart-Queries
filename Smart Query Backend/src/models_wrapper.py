@@ -3,6 +3,7 @@ from cost_estimation_module import update_embedding_usage, update_model_input_us
 from model_providers import openai
 from model_providers import google
 from model_providers import groq
+from model_providers import llama_cpp
 from custom_exceptions import ApplicationException
 
 client = OpenAI()
@@ -42,6 +43,8 @@ def get_instruct_response(prompt, request_data):
         creator = google.get_instruct_response
     elif model_provider == 'groq':
         creator = groq.get_instruct_response
+    elif model_provider == 'local':
+        creator = llama_cpp.get_instruct_response
     else:
         raise ApplicationException(f'Unknown model provider: {model_provider}')
     
