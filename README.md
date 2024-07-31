@@ -11,8 +11,7 @@ make -j
 ```
 
 Step 2) Download a GGUF format model
-I have used 
-```https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/tree/main?show_file_info=mistral-7b-instruct-v0.1.Q6_K.gguf```
+I have used [mistral-7b-instruct-v0.1.Q6_K.gguf](https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/tree/main?show_file_info=mistral-7b-instruct-v0.1.Q6_K.gguf)
 
 Step 3) In the build/bin is the llama-server binary
 I have used the command 
