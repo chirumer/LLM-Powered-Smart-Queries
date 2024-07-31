@@ -19,3 +19,11 @@ I have used the command
 ./build/bin/llama-server --color --model "../model/mistral-7b-instruct-v0.1.Q6_K.gguf" -t 7 -b 24 -n -1 --temp 0.3 -ngl 1
 ```
 For more information about options usable: https://github.com/ggerganov/llama.cpp
+
+Step 4) Test that the server is up by running the curl
+```
+curl --request POST \
+    --url http://localhost:8080/completion \
+    --header "Content-Type: application/json" \
+    --data '{"prompt": "Building a website can be done in 10 simple steps:","n_predict": 128}'
+```
