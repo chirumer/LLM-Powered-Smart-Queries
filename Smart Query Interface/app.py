@@ -27,6 +27,7 @@ available_models = [
     "groq | llama3-70b-8192", 
     "groq | llama3-8b-8192",
     "groq | gemma-7b-it",
+    "groq | gemma2-9b-it",
     "groq | mixtral-8x7b-32768"
 ]
 
