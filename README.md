@@ -1,4 +1,4 @@
-##Running model locally:
+# Running model locally:
 
 Step 1) Install Llama.cpp
 git clone https://github.com/ggerganov/llama.cpp
